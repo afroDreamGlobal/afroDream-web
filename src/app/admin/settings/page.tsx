@@ -851,19 +851,81 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* SECTION 5: CORPORATE CONTACTS & ADDRESSES                                 */}
+        {/* SECTION 5: FOOTER BRANDING, WHATSAPP & CONTACT DETAILS                     */}
         {/* ========================================================================= */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border space-y-4">
-          <h3 className="font-heading text-lg uppercase text-brand-dark border-b border-brand-border pb-3">
-            Corporate Phone & Email Contacts
-          </h3>
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border space-y-6">
+          <div className="border-b border-brand-border pb-3">
+            <h3 className="font-heading text-lg uppercase text-brand-dark">
+              Footer Branding & Company Identity
+            </h3>
+            <p className="text-xs text-brand-muted mt-0.5">
+              Customize the company name and introductory tagline displayed directly in the website footer across all pages.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-brand-dark mb-1">
-                Phone (Tanzania / Mtwara)
+                Company Legal / Display Name
               </label>
               <input
                 type="text"
+                placeholder="Afro Dream Global"
+                value={settings.companyName || ''}
+                onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
+                className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-brand-dark mb-1">
+                WhatsApp Redirection Number
+              </label>
+              <input
+                type="text"
+                placeholder="+255 744 555 890"
+                value={settings.whatsappNumber || ''}
+                onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
+                className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
+              />
+              <span className="text-[11px] text-slate-500 mt-1 block">
+                Controls the floating WhatsApp chat button and instant booking buttons site-wide.
+              </span>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold text-brand-dark mb-1">
+                Footer Tagline / Mission Statement
+              </label>
+              <textarea
+                rows={2}
+                placeholder="Premier African shipping, freight forwarding, and multimodal logistics company..."
+                value={settings.tagline || ''}
+                onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
+                className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Corporate Phone & Email Contacts */}
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border space-y-4">
+          <div className="border-b border-brand-border pb-3">
+            <h3 className="font-heading text-lg uppercase text-brand-dark">
+              Corporate Phone & Email Contacts
+            </h3>
+            <p className="text-xs text-brand-muted mt-0.5">
+              These phone numbers and emails immediately update the website footer, contact page, and quote desk.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-brand-dark mb-1">
+                Phone (Tanzania / Mtwara Corridor)
+              </label>
+              <input
+                type="text"
+                placeholder="+255 744 555 890"
                 value={settings.phoneTanzania || ''}
                 onChange={(e) => setSettings({ ...settings, phoneTanzania: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
@@ -872,10 +934,11 @@ export default function AdminSettingsPage() {
 
             <div>
               <label className="block text-xs font-semibold text-brand-dark mb-1">
-                Phone (Guinea-Bissau / CSS)
+                Phone (Guinea-Bissau / CAJU SWIFT SARL)
               </label>
               <input
                 type="text"
+                placeholder="+245 955 888 123"
                 value={settings.phoneGuineaBissau || ''}
                 onChange={(e) =>
                   setSettings({ ...settings, phoneGuineaBissau: e.target.value })
@@ -890,20 +953,9 @@ export default function AdminSettingsPage() {
               </label>
               <input
                 type="text"
+                placeholder="+91 98401 23456"
                 value={settings.phoneIndia || ''}
                 onChange={(e) => setSettings({ ...settings, phoneIndia: e.target.value })}
-                className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-brand-dark mb-1">
-                WhatsApp Connect Number
-              </label>
-              <input
-                type="text"
-                value={settings.whatsappNumber || ''}
-                onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
               />
             </div>
@@ -914,18 +966,20 @@ export default function AdminSettingsPage() {
               </label>
               <input
                 type="email"
+                placeholder="info@afrodreamglobal.com"
                 value={settings.primaryEmail || ''}
                 onChange={(e) => setSettings({ ...settings, primaryEmail: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
               />
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-brand-dark mb-1">
-                Freight Quotes Email
+                Freight Quotes & Commercial Desk Email
               </label>
               <input
                 type="email"
+                placeholder="quotes@afrodreamglobal.com"
                 value={settings.quotesEmail || ''}
                 onChange={(e) => setSettings({ ...settings, quotesEmail: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
@@ -936,9 +990,14 @@ export default function AdminSettingsPage() {
 
         {/* Regional Physical Addresses */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border space-y-4">
-          <h3 className="font-heading text-lg uppercase text-brand-dark border-b border-brand-border pb-3">
-            Regional Office Addresses
-          </h3>
+          <div className="border-b border-brand-border pb-3">
+            <h3 className="font-heading text-lg uppercase text-brand-dark">
+              Regional Office Addresses
+            </h3>
+            <p className="text-xs text-brand-muted mt-0.5">
+              Physical office and warehouse locations displayed across the footer and contact directory.
+            </p>
+          </div>
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-brand-dark mb-1">
@@ -946,6 +1005,7 @@ export default function AdminSettingsPage() {
               </label>
               <input
                 type="text"
+                placeholder="Mtwara Port Logistics Corridor, Mtwara, Tanzania"
                 value={settings.addressTanzania || ''}
                 onChange={(e) => setSettings({ ...settings, addressTanzania: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"
@@ -958,6 +1018,7 @@ export default function AdminSettingsPage() {
               </label>
               <input
                 type="text"
+                placeholder="CAJU SWIFT SARL, Port Commercial Sector, Bissau, Guinea-Bissau"
                 value={settings.addressGuineaBissau || ''}
                 onChange={(e) =>
                   setSettings({ ...settings, addressGuineaBissau: e.target.value })
@@ -972,6 +1033,7 @@ export default function AdminSettingsPage() {
               </label>
               <input
                 type="text"
+                placeholder="Port Logistics Wing, Tuticorin & Mangalore, India"
                 value={settings.addressIndia || ''}
                 onChange={(e) => setSettings({ ...settings, addressIndia: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-blue"

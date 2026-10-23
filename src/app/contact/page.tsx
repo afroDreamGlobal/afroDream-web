@@ -1,9 +1,11 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { store } from '@/lib/store';
-import { Phone, Mail, MapPin, Clock, MessageSquare, ArrowRight } from 'lucide-react';
+import { getLiveSettings } from '@/lib/settings';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import Link from 'next/link';
+
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Contact Us — Afro Dream Global | Offices in Tanzania, Guinea-Bissau & India',
@@ -11,15 +13,26 @@ export const metadata = {
     'Contact Afro Dream Global operations desk for vessel schedules, container allocations, and customs clearance inquiries.',
 };
 
-export default function ContactPage() {
-  const settings = store.getSettings();
+export default async function ContactPage() {
+  const settings = await getLiveSettings();
+
+  const phoneTanzania = settings.phoneTanzania || '+255 744 555 890';
+  const phoneGuineaBissau = settings.phoneGuineaBissau || '+245 955 888 123';
+  const phoneIndia = settings.phoneIndia || '+91 98401 23456';
+
+  const emailPrimary = settings.primaryEmail || 'info@afrodreamglobal.com';
+  const emailQuotes = settings.quotesEmail || 'quotes@afrodreamglobal.com';
+
+  const addressTanzania = settings.addressTanzania || 'Mtwara Port Logistics Corridor, Mtwara, Tanzania';
+  const addressGuineaBissau = settings.addressGuineaBissau || 'Port Commercial Sector, Bissau, Guinea-Bissau';
+  const addressIndia = settings.addressIndia || 'Harbour Gate Road, Tuticorin & New Mangalore Port, India';
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F5F7FA]">
       <Navbar
         announcementText={settings.announcementBarText}
-        phoneText={settings.phoneTanzania}
-        emailText={settings.primaryEmail}
+        phoneText={phoneTanzania}
+        emailText={emailPrimary}
       />
 
       <main className="flex-grow py-16 sm:py-24">
@@ -53,18 +66,21 @@ export default function ContactPage() {
               <div className="space-y-2.5 pt-2 text-xs text-gray-700">
                 <div className="flex items-start space-x-2">
                   <MapPin className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
-                  <span>Mtwara Port Logistics Corridor, Mtwara, Tanzania</span>
+                  <span>{addressTanzania}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a href="tel:+255744555890" className="text-brand-blue hover:underline">
-                    +255 744 555 890
+                  <a
+                    href={`tel:${phoneTanzania.replace(/\s+/g, '')}`}
+                    className="text-brand-blue hover:underline"
+                  >
+                    {phoneTanzania}
                   </a>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a href="mailto:info@afrodreamglobal.com" className="text-brand-blue hover:underline">
-                    info@afrodreamglobal.com
+                  <a href={`mailto:${emailPrimary}`} className="text-brand-blue hover:underline">
+                    {emailPrimary}
                   </a>
                 </div>
               </div>
@@ -84,18 +100,21 @@ export default function ContactPage() {
               <div className="space-y-2.5 pt-2 text-xs text-gray-700">
                 <div className="flex items-start space-x-2">
                   <MapPin className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
-                  <span>Port Commercial Sector, Bissau, Guinea-Bissau</span>
+                  <span>{addressGuineaBissau}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a href="tel:+245955888123" className="text-brand-blue hover:underline">
-                    +245 955 888 123
+                  <a
+                    href={`tel:${phoneGuineaBissau.replace(/\s+/g, '')}`}
+                    className="text-brand-blue hover:underline"
+                  >
+                    {phoneGuineaBissau}
                   </a>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a href="mailto:bissau@afrodreamglobal.com" className="text-brand-blue hover:underline">
-                    bissau@afrodreamglobal.com
+                  <a href={`mailto:${emailPrimary}`} className="text-brand-blue hover:underline">
+                    {emailPrimary}
                   </a>
                 </div>
               </div>
@@ -115,18 +134,21 @@ export default function ContactPage() {
               <div className="space-y-2.5 pt-2 text-xs text-gray-700">
                 <div className="flex items-start space-x-2">
                   <MapPin className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
-                  <span>Harbour Gate Road, Tuticorin & New Mangalore Port, India</span>
+                  <span>{addressIndia}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a href="tel:+919840123456" className="text-brand-blue hover:underline">
-                    +91 98401 23456
+                  <a
+                    href={`tel:${phoneIndia.replace(/\s+/g, '')}`}
+                    className="text-brand-blue hover:underline"
+                  >
+                    {phoneIndia}
                   </a>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a href="mailto:india@afrodreamglobal.com" className="text-brand-blue hover:underline">
-                    india@afrodreamglobal.com
+                  <a href={`mailto:${emailQuotes}`} className="text-brand-blue hover:underline">
+                    {emailQuotes}
                   </a>
                 </div>
               </div>
@@ -154,7 +176,7 @@ export default function ContactPage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

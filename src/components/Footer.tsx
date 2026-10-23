@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AfroDreamLogo from './AfroDreamLogo';
+import { SiteSettings } from '@/lib/types';
+import { INITIAL_SETTINGS } from '@/lib/store';
 import {
   Phone,
   Mail,
@@ -13,7 +15,16 @@ import {
   Globe2,
 } from 'lucide-react';
 
-export default function Footer() {
+interface FooterProps {
+  settings?: Partial<SiteSettings>;
+}
+
+export default function Footer({ settings }: FooterProps = {}) {
+  // Dynamic settings state, falling back to INITIAL_SETTINGS
+  const [siteSettings, setSiteSettings] = useState<Partial<SiteSettings>>(
+    settings || INITIAL_SETTINGS
+  );
+
   // Mobile accordion state — by default, all collapsed for a clean compact mobile view
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     navigation: false,
@@ -27,6 +38,22 @@ export default function Footer() {
       [key]: !prev[key],
     }));
   };
+
+  useEffect(() => {
+    if (settings && Object.keys(settings).length > 0) {
+      setSiteSettings((prev) => ({ ...prev, ...settings }));
+    } else {
+      // Auto-fetch latest live settings from Supabase/API if not passed as props
+      fetch('/api/admin/settings')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.success && data.data) {
+            setSiteSettings((prev) => ({ ...prev, ...data.data }));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [settings]);
 
   const navLinks = [
     { label: 'Home', href: '/' },
@@ -46,6 +73,26 @@ export default function Footer() {
     { label: 'Local Transportation in India', href: '/services/local-transportation-india' },
   ];
 
+  // Resolve dynamic numbers and contacts
+  const phoneTanzania = siteSettings.phoneTanzania || '+255 744 555 890';
+  const phoneGuineaBissau = siteSettings.phoneGuineaBissau || '+245 955 888 123';
+  const phoneIndia = siteSettings.phoneIndia || '+91 98401 23456';
+  const primaryEmail = siteSettings.primaryEmail || 'info@afrodreamglobal.com';
+  const quotesEmail = siteSettings.quotesEmail || 'quotes@afrodreamglobal.com';
+
+  const addressTanzania =
+    siteSettings.addressTanzania || 'Mtwara Port Logistics Corridor, Tanzania';
+  const addressGuineaBissau =
+    siteSettings.addressGuineaBissau || 'CAJU SWIFT SARL, Bissau, Guinea-Bissau';
+
+  // Format WhatsApp number for universal wa.me redirection
+  const rawWhatsApp =
+    siteSettings.whatsappNumber || siteSettings.phoneTanzania || '255744555890';
+  const cleanWhatsAppNumber = rawWhatsApp.replace(/[^0-9]/g, '');
+  const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
+    'Hello Afro Dream Global, I would like to inquire about shipping services.'
+  )}`;
+
   return (
     <footer className="bg-[#0B1320] text-white border-t border-slate-800/80 pt-12 sm:pt-16 pb-10 relative overflow-hidden">
       {/* Subtle background ambient glow */}
@@ -60,9 +107,8 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-4 sm:space-y-5">
             <AfroDreamLogo variant="color" size="lg" />
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm font-light">
-              Premier African shipping, freight forwarding, and multimodal logistics company.
-              Specialized in containerized Raw Cashew Nut (RCN) exports and direct port clearing
-              across Tanzania, West Africa, India, and Vietnam.
+              {siteSettings.tagline ||
+                'Premier African shipping, freight forwarding, and multimodal logistics company. Specialized in containerized Raw Cashew Nut (RCN) exports and direct port clearing across Tanzania, West Africa, India, and Vietnam.'}
             </p>
 
             {/* Operating Entities Badges */}
@@ -118,9 +164,9 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="hover:text-white hover:translate-x-1 transition-all inline-block text-slate-300"
+                      className="hover:text-white hover:translate-x-1 inline-flex items-center transition-all duration-150"
                     >
-                      {link.label}
+                      <span>{link.label}</span>
                     </Link>
                   </li>
                 ))}
@@ -129,7 +175,7 @@ export default function Footer() {
           </div>
 
           {/* ========================================================================= */}
-          {/* SECTION 2: CORE SERVICES (Mobile Accordion / Desktop Static Column)        */}
+          {/* SECTION 2: SPECIALIZED FREIGHT SERVICES                                   */}
           {/* ========================================================================= */}
           <div className="lg:col-span-3 border-t border-white/10 pt-3 md:border-none md:pt-0">
             <button
@@ -139,7 +185,7 @@ export default function Footer() {
               aria-expanded={openSections.services}
             >
               <h4 className="text-xs font-bold uppercase tracking-wider text-brand-blue font-sans">
-                Our Core Services
+                Core Services
               </h4>
               <span className="p-1 rounded-md text-slate-400 group-hover:text-white transition-colors md:hidden">
                 <ChevronDown
@@ -163,9 +209,9 @@ export default function Footer() {
                   <li key={service.href}>
                     <Link
                       href={service.href}
-                      className="hover:text-white hover:translate-x-1 transition-all inline-block text-slate-300"
+                      className="hover:text-white hover:translate-x-1 inline-flex items-center transition-all duration-150"
                     >
-                      {service.label}
+                      <span>{service.label}</span>
                     </Link>
                   </li>
                 ))}
@@ -174,7 +220,7 @@ export default function Footer() {
           </div>
 
           {/* ========================================================================= */}
-          {/* SECTION 3: CORPORATE CONTACTS (Mobile Accordion / Desktop Static Column)   */}
+          {/* SECTION 3: CORPORATE CONTACTS & ADDRESSES (DYNAMICALLY FROM SUPABASE)     */}
           {/* ========================================================================= */}
           <div className="lg:col-span-3 border-t border-white/10 pt-3 md:border-none md:pt-0">
             <button
@@ -204,39 +250,62 @@ export default function Footer() {
               }`}
             >
               <div className="space-y-3 text-xs sm:text-sm text-slate-300 pb-2 md:pb-0">
+                {/* Physical Address */}
                 <div className="flex items-start space-x-2.5">
                   <MapPin className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
                   <span className="text-xs text-slate-300 leading-snug">
-                    Mtwara Port Logistics Corridor, Tanzania & CAJU SWIFT SARL, Bissau.
+                    {addressTanzania}
+                    {addressGuineaBissau ? ` & ${addressGuineaBissau}` : ''}
                   </span>
                 </div>
+
+                {/* Tanzania Phone */}
                 <div className="flex items-center space-x-2.5">
                   <Phone className="w-4 h-4 text-brand-blue flex-shrink-0" />
                   <a
-                    href="tel:+255744555890"
+                    href={`tel:${phoneTanzania.replace(/\s+/g, '')}`}
                     className="hover:text-white text-xs text-slate-300 transition-colors"
                   >
-                    +255 744 555 890 (Tanzania)
+                    {phoneTanzania} (Tanzania)
                   </a>
                 </div>
+
+                {/* West Africa Phone (if different) */}
+                {phoneGuineaBissau && phoneGuineaBissau !== phoneTanzania && (
+                  <div className="flex items-center space-x-2.5">
+                    <Phone className="w-4 h-4 text-brand-blue flex-shrink-0" />
+                    <a
+                      href={`tel:${phoneGuineaBissau.replace(/\s+/g, '')}`}
+                      className="hover:text-white text-xs text-slate-300 transition-colors"
+                    >
+                      {phoneGuineaBissau} (West Africa)
+                    </a>
+                  </div>
+                )}
+
+                {/* General Inquiry Email */}
                 <div className="flex items-center space-x-2.5">
                   <Mail className="w-4 h-4 text-brand-blue flex-shrink-0" />
                   <a
-                    href="mailto:info@afrodreamglobal.com"
+                    href={`mailto:${primaryEmail}`}
                     className="hover:text-white text-xs text-slate-300 transition-colors"
                   >
-                    info@afrodreamglobal.com
+                    {primaryEmail}
                   </a>
                 </div>
-                <div className="flex items-center space-x-2.5">
-                  <Mail className="w-4 h-4 text-brand-blue flex-shrink-0" />
-                  <a
-                    href="mailto:quotes@afrodreamglobal.com"
-                    className="hover:text-white text-xs text-slate-300 transition-colors"
-                  >
-                    quotes@afrodreamglobal.com
-                  </a>
-                </div>
+
+                {/* Quotes Email */}
+                {quotesEmail && (
+                  <div className="flex items-center space-x-2.5">
+                    <Mail className="w-4 h-4 text-brand-blue flex-shrink-0" />
+                    <a
+                      href={`mailto:${quotesEmail}`}
+                      className="hover:text-white text-xs text-slate-300 transition-colors"
+                    >
+                      {quotesEmail}
+                    </a>
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <Link
@@ -257,7 +326,7 @@ export default function Footer() {
         {/* ========================================================================= */}
         <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <div className="text-center sm:text-left">
-            &copy; {new Date().getFullYear()} Afro Dream Global. All rights reserved.
+            &copy; {new Date().getFullYear()} {siteSettings.companyName || 'Afro Dream Global'}. All rights reserved.
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <Link href="/about" className="hover:text-white transition-colors">
@@ -271,14 +340,14 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Floating WhatsApp Quick Connect Button */}
+      {/* Floating WhatsApp Quick Connect Button (Dynamically configured from Admin Dashboard) */}
       <a
-        href="https://wa.me/255744555890?text=Hello%20Afro%20Dream%20Global,%20I%20would%20like%20to%20inquire%20about%20shipping%20services."
+        href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-30 bg-[#25D366] hover:bg-[#20ba5a] text-white p-3.5 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center focus:outline-none"
         aria-label="Connect on WhatsApp"
-        title="Chat on WhatsApp"
+        title={`Chat on WhatsApp (${rawWhatsApp})`}
       >
         <svg
           className="w-7 h-7 fill-current"
