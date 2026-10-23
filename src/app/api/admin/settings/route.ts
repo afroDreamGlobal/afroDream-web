@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { store } from '@/lib/store';
+import { store, INITIAL_SETTINGS } from '@/lib/store';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 
 export async function GET() {
@@ -14,14 +14,21 @@ export async function GET() {
           .maybeSingle();
 
         if (data && data.settings_data) {
-          return NextResponse.json({ success: true, data: data.settings_data });
+          return NextResponse.json({
+            success: true,
+            data: {
+              ...INITIAL_SETTINGS,
+              ...store.getSettings(),
+              ...data.settings_data,
+            },
+          });
         }
       } catch (err) {
         console.warn('[Supabase Settings Fetch Fallback]', err);
       }
     }
 
-    const settings = store.getSettings();
+    const settings = { ...INITIAL_SETTINGS, ...store.getSettings() };
     return NextResponse.json({ success: true, data: settings });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Error loading settings';
@@ -34,14 +41,30 @@ export async function POST(request: Request) {
     const json = await request.json();
     const updated = store.updateSettings(json);
 
-    // If Supabase is configured, persist to database
+    // If Supabase is configured, persist to database with deep merge
     if (isSupabaseConfigured && supabaseAdmin) {
       try {
-        await supabaseAdmin.from('site_settings').upsert({
+        const { data: existing } = await supabaseAdmin
+          .from('site_settings')
+          .select('settings_data')
+          .eq('id', 'primary')
+          .maybeSingle();
+
+        const mergedSettings = {
+          ...INITIAL_SETTINGS,
+          ...(existing?.settings_data || {}),
+          ...json,
+        };
+
+        const { error: upsertError } = await supabaseAdmin.from('site_settings').upsert({
           id: 'primary',
-          settings_data: json,
+          settings_data: mergedSettings,
           updated_at: new Date().toISOString(),
         });
+
+        if (upsertError) {
+          console.error('[Supabase Settings Upsert Error]', upsertError);
+        }
       } catch (dbErr) {
         console.error('[Supabase Settings Save Error]', dbErr);
       }

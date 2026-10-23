@@ -185,7 +185,7 @@ export default async function AboutPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

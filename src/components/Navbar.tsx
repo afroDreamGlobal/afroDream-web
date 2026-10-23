@@ -9,10 +9,7 @@ import AfroDreamLogo from './AfroDreamLogo';
 import {
   Menu,
   X,
-  Phone,
-  Mail,
   ArrowRight,
-  ShieldCheck,
   Search,
   ChevronRight,
 } from 'lucide-react';
@@ -86,32 +83,6 @@ export default function Navbar({
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-border/80 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] transition-all">
-        {/* Top Corporate Status Bar */}
-        <div className="bg-[#1A1718] text-white text-[11px] py-1.5 px-4 hidden md:block border-b border-white/10 tracking-wide">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <div className="flex items-center space-x-2 text-gray-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-medium text-gray-200">{announcementText}</span>
-            </div>
-            <div className="flex items-center space-x-5 text-gray-300">
-              <a
-                href={`tel:${phoneText.replace(/\s+/g, '')}`}
-                className="flex items-center space-x-1.5 hover:text-white transition-colors"
-              >
-                <Phone className="w-3 h-3 text-brand-blue" />
-                <span>{phoneText}</span>
-              </a>
-              <a
-                href={`mailto:${emailText}`}
-                className="flex items-center space-x-1.5 hover:text-white transition-colors"
-              >
-                <Mail className="w-3 h-3 text-brand-blue" />
-                <span>{emailText}</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
         {/* Main Navigation Bar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">

@@ -310,7 +310,7 @@ export default async function ServicesPage() {
                   </Link>
 
                   <a
-                    href="tel:+255744555890"
+                    href={`tel:${(settings.phoneTanzania || '+255744555890').replace(/[^0-9+]/g, '')}`}
                     className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold border border-white/20 transition-all duration-200"
                   >
                     <Phone className="w-4 h-4 text-cyan-400" />
@@ -323,7 +323,7 @@ export default async function ServicesPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

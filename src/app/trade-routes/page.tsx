@@ -184,7 +184,7 @@ export default async function TradeRoutesPage() {
         <TradeRoutesSection routes={routes} />
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

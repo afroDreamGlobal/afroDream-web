@@ -182,7 +182,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
         </section>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

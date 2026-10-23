@@ -160,12 +160,12 @@ export default async function HomePage() {
                   <div className="text-sm text-gray-700">
                     Reach our direct booking operations desk on WhatsApp:{' '}
                     <a
-                      href="https://wa.me/255744555890"
+                      href={`https://wa.me/${(settings.whatsappNumber || settings.phoneTanzania || '255744555890').replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-bold text-brand-blue hover:underline"
                     >
-                      +255 744 555 890
+                      {settings.whatsappNumber || settings.phoneTanzania || '+255 744 555 890'}
                     </a>
                   </div>
                 </div>
@@ -179,7 +179,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

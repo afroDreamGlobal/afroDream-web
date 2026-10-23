@@ -2,8 +2,10 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import QuoteForm from '@/components/QuoteForm';
-import { store } from '@/lib/store';
-import { ShieldCheck, Clock, CheckCircle2, Phone, Mail } from 'lucide-react';
+import { getLiveSettings } from '@/lib/settings';
+import { ShieldCheck, CheckCircle2, Phone, Mail } from 'lucide-react';
+
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Request a Freight Quote — Afro Dream Global',
@@ -11,19 +13,23 @@ export const metadata = {
     'Submit your shipping inquiry for container shipments, bulk vessels, and inland transport between Africa, India, and Vietnam.',
 };
 
-export default function QuotePage({
+export default async function QuotePage({
   searchParams,
 }: {
   searchParams: { service?: string; origin?: string; destination?: string };
 }) {
-  const settings = store.getSettings();
+  const settings = await getLiveSettings();
   const defaultService = searchParams.service || 'Container Shipment';
+
+  const phoneTanzania = settings.phoneTanzania || '+255 744 555 890';
+  const phoneGuineaBissau = settings.phoneGuineaBissau || '+245 955 888 123';
+  const emailQuotes = settings.quotesEmail || 'quotes@afrodreamglobal.com';
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F5F7FA]">
       <Navbar
         announcementText={settings.announcementBarText}
-        phoneText={settings.phoneTanzania}
+        phoneText={phoneTanzania}
         emailText={settings.primaryEmail}
       />
 
@@ -38,19 +44,19 @@ export default function QuotePage({
             </h1>
             <p className="mt-3 text-base text-gray-600 font-light">
               Submit your cargo specifications and target shipping corridor. Our operations desk
-              reviews current ocean carrier allocations and responds within 24 business hours.
+              calculates real-time freight rates, bunker adjustments, and equipment availability.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            {/* Form Column */}
+            {/* Form Section */}
             <div className="lg:col-span-8">
               <QuoteForm defaultService={defaultService} />
             </div>
 
-            {/* Side Information Column */}
+            {/* Sidebar Information */}
             <div className="lg:col-span-4 space-y-6">
-              {/* Commercial Desk Box */}
+              {/* Direct Support */}
               <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-card border border-brand-border space-y-4">
                 <h3 className="font-heading text-xl uppercase text-brand-dark">
                   Direct Freight Desk
@@ -65,8 +71,11 @@ export default function QuotePage({
                     <Phone className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="font-semibold text-brand-dark">Tanzania Operations (Mtwara)</div>
-                      <a href="tel:+255744555890" className="text-brand-blue hover:underline">
-                        +255 744 555 890
+                      <a
+                        href={`tel:${phoneTanzania.replace(/\s+/g, '')}`}
+                        className="text-brand-blue hover:underline"
+                      >
+                        {phoneTanzania}
                       </a>
                     </div>
                   </div>
@@ -75,8 +84,11 @@ export default function QuotePage({
                     <Phone className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="font-semibold text-brand-dark">West Africa (CAJU SWIFT SARL)</div>
-                      <a href="tel:+245955888123" className="text-brand-blue hover:underline">
-                        +245 955 888 123
+                      <a
+                        href={`tel:${phoneGuineaBissau.replace(/\s+/g, '')}`}
+                        className="text-brand-blue hover:underline"
+                      >
+                        {phoneGuineaBissau}
                       </a>
                     </div>
                   </div>
@@ -85,8 +97,8 @@ export default function QuotePage({
                     <Mail className="w-4 h-4 text-brand-blue flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="font-semibold text-brand-dark">Email Inquiries</div>
-                      <a href="mailto:quotes@afrodreamglobal.com" className="text-brand-blue hover:underline">
-                        quotes@afrodreamglobal.com
+                      <a href={`mailto:${emailQuotes}`} className="text-brand-blue hover:underline">
+                        {emailQuotes}
                       </a>
                     </div>
                   </div>
@@ -121,7 +133,7 @@ export default function QuotePage({
         </div>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }
