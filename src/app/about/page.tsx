@@ -1,0 +1,161 @@
+import React from 'react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import Image from 'next/image';
+import Link from 'next/link';
+import { store } from '@/lib/store';
+import { Shield, Globe, Award, Anchor, CheckCircle2, ArrowRight } from 'lucide-react';
+
+export const metadata = {
+  title: 'About Us — Afro Dream Global | African Freight Forwarding & Logistics',
+  description:
+    'Learn about Afro Dream Global, our operations through CAJU SWIFT SARL in Guinea-Bissau since 2022, and our containerized Raw Cashew Nut shipping network in Tanzania.',
+};
+
+export default function AboutPage() {
+  const settings = store.getSettings();
+
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <Navbar
+        announcementText={settings.announcementBarText}
+        phoneText={settings.phoneTanzania}
+        emailText={settings.primaryEmail}
+      />
+
+      <main className="flex-grow">
+        {/* Hero Banner */}
+        <section className="bg-brand-dark text-white py-20 lg:py-24 relative overflow-hidden">
+          <div className="absolute inset-0 z-0 opacity-20">
+            <Image
+              src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80"
+              alt="Global logistics port"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <span className="text-xs font-bold tracking-widest uppercase text-cyan-400 block mb-2 font-sans">
+              CORPORATE PROFILE
+            </span>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-heading uppercase text-white leading-tight">
+              CONNECTING AFRICA TO GLOBAL TRADE
+            </h1>
+            <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-2xl font-light">
+              Built on integrity, commodity specialization, and dedicated port operations across
+              East and West Africa.
+            </p>
+          </div>
+        </section>
+
+        {/* Story & Background */}
+        <section className="py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-6 space-y-6">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-brand-blue block mb-1">
+                    OUR HISTORY & IDENTITY
+                  </span>
+                  <h2 className="text-3xl sm:text-5xl font-heading uppercase text-brand-dark leading-none">
+                    AFRO DREAM GLOBAL
+                  </h2>
+                </div>
+
+                <div className="space-y-4 text-base text-gray-700 leading-relaxed font-light">
+                  <p>
+                    <strong>AFRO DREAM GLOBAL (CAJU SWIFT SARL / CSS in Guinea-Bissau)</strong> is an
+                    international logistics and shipping service provider based in West Africa. Since
+                    2022, we have specialized in the containerized shipment of raw cashew nuts,
+                    establishing ourselves as a reliable partner in the shipping and logistics industry.
+                  </p>
+                  <p>
+                    With deep operational roots extending from Guinea-Bissau in West Africa to Mtwara
+                    Port and southern Tanzania in East Africa, we provide end-to-end cargo handling. We
+                    bridge the gap between African commodity producers and global buyers across India,
+                    Vietnam, and international consumer markets.
+                  </p>
+                  <p>
+                    Our core mission is straightforward: eliminate supply chain friction, deliver
+                    dependable maritime schedules, and safeguard cargo quality through every step of
+                    inland haulage, port loading, deep-sea transit, and destination customs clearance.
+                  </p>
+                </div>
+
+                <div className="pt-4">
+                  <Link href="/quote" className="btn-primary px-7 py-3 rounded-lg text-sm font-semibold">
+                    Request a Consultation
+                  </Link>
+                </div>
+              </div>
+
+              <div className="lg:col-span-6">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 aspect-[4/3]">
+                  <Image
+                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80"
+                    alt="Port cargo handling"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Strategic Pillars */}
+        <section className="py-16 bg-brand-bg border-t border-brand-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="text-xs font-bold tracking-widest uppercase text-brand-blue block mb-1">
+                OUR COMMITMENT
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-heading uppercase text-brand-dark">
+                CORE OPERATIONAL PILLARS
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white p-8 rounded-2xl shadow-card border border-brand-border space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                  <Shield className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-heading uppercase text-brand-dark">Cargo Integrity</h3>
+                <p className="text-sm text-gray-600 font-light leading-relaxed">
+                  Raw cashew nuts require meticulous moisture management, ventilated containers, and
+                  experienced stuffing teams. We ensure zero compromise in product quality.
+                </p>
+              </div>
+
+              <div className="bg-white p-8 rounded-2xl shadow-card border border-brand-border space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                  <Anchor className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-heading uppercase text-brand-dark">Direct Port Presence</h3>
+                <p className="text-sm text-gray-600 font-light leading-relaxed">
+                  Active berths and bonded warehousing at Mtwara Port (Tanzania) and Bissau
+                  (Guinea-Bissau), providing priority berthing and prompt bill of lading issuance.
+                </p>
+              </div>
+
+              <div className="bg-white p-8 rounded-2xl shadow-card border border-brand-border space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                  <Globe className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-heading uppercase text-brand-dark">Multimodal Execution</h3>
+                <p className="text-sm text-gray-600 font-light leading-relaxed">
+                  From farm collection warehouses across southern Tanzania, ocean freight across the
+                  Indian Ocean, to destination port clearing and trucking straight to Indian mills.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-blue: #2B7CC0;
+  --primary-dark: #231F20;
+  --bg-light: #F5F7FA;
+  --muted-text: #667085;
+  --subtle-border: #E4E7EC;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-poppins), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #231F20;
+  background-color: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Display Headings font with robust system fallbacks */
+h1, h2, h3, .font-heading {
+  font-family: var(--font-bebas), Impact, 'Arial Narrow', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2B7CC0;
+}
+
+/* Button & Card Utilities */
+.btn-primary {
+  @apply inline-flex items-center justify-center font-semibold text-white bg-brand-blue hover:bg-brand-blue-hover transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] rounded-md px-5 py-2.5 text-sm;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center font-semibold text-brand-dark bg-white hover:bg-gray-50 border border-brand-border transition-all duration-200 active:scale-[0.98] rounded-md px-5 py-2.5 text-sm;
+}
+
+.btn-outline-white {
+  @apply inline-flex items-center justify-center font-semibold text-white bg-transparent hover:bg-white/10 border border-white/60 transition-all duration-200 active:scale-[0.98] rounded-md px-5 py-2.5 text-sm;
+}
+
+.btn-dark {
+  @apply inline-flex items-center justify-center font-semibold text-white bg-brand-dark hover:bg-black transition-all duration-200 active:scale-[0.98] rounded-md px-5 py-2.5 text-sm;
+}

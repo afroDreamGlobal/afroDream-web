@@ -1,0 +1,163 @@
+import React from 'react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import QuoteForm from '@/components/QuoteForm';
+import { store } from '@/lib/store';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowLeft, CheckCircle2, Shield, Globe, Navigation, ChevronRight } from 'lucide-react';
+
+interface ServiceDetailPageProps {
+  params: {
+    slug: string;
+  };
+}
+
+export function generateStaticParams() {
+  const services = store.getServices();
+  return services.map((s) => ({ slug: s.slug }));
+}
+
+export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
+  const service = store.getServiceBySlug(params.slug);
+
+  if (!service) {
+    notFound();
+  }
+
+  const allServices = store.getPublishedServices();
+  const relatedServices = allServices.filter((s) => s.id !== service.id).slice(0, 3);
+  const settings = store.getSettings();
+
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <Navbar
+        announcementText={settings.announcementBarText}
+        phoneText={settings.phoneTanzania}
+        emailText={settings.primaryEmail}
+      />
+
+      <main className="flex-grow">
+        {/* Breadcrumb & Header */}
+        <section className="bg-brand-dark text-white py-14 lg:py-20 relative overflow-hidden">
+          <div className="absolute inset-0 z-0 opacity-20">
+            <Image
+              src={service.imageUrl}
+              alt={service.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-brand-dark/80" />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <Link
+              href="/services"
+              className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-brand-blue hover:text-white transition-colors mb-6"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to All Services</span>
+            </Link>
+
+            <span className="text-xs font-bold tracking-widest uppercase text-cyan-400 block mb-2 font-sans">
+              {service.category}
+            </span>
+            <h1 className="text-4xl sm:text-6xl font-heading uppercase text-white leading-tight max-w-3xl">
+              {service.title}
+            </h1>
+            {service.routeHighlight && (
+              <p className="mt-4 text-sm sm:text-base text-gray-300 font-medium">
+                Route Coverage: {service.routeHighlight}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Content Body */}
+        <section className="py-16 sm:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+              {/* Left Column: Details & Features */}
+              <div className="lg:col-span-7 space-y-10">
+                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+                  <Image
+                    src={service.imageUrl}
+                    alt={service.title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <h2 className="text-2xl sm:text-3xl font-heading uppercase text-brand-dark">
+                    Overview & Operational Scope
+                  </h2>
+                  <p className="text-base text-gray-700 leading-relaxed font-light">
+                    {service.fullDescription}
+                  </p>
+                </div>
+
+                {/* Key Capabilities */}
+                <div className="space-y-4 pt-4 border-t border-brand-border">
+                  <h3 className="text-xl font-heading uppercase text-brand-dark">
+                    Key Operational Capabilities
+                  </h3>
+                  <div className="space-y-3">
+                    {service.features.map((feat, idx) => (
+                      <div key={idx} className="flex items-start space-x-3 p-3.5 rounded-xl bg-brand-bg border border-brand-border/60">
+                        <CheckCircle2 className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-gray-800 font-medium">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Related Services */}
+                <div className="space-y-4 pt-6 border-t border-brand-border">
+                  <h3 className="text-xl font-heading uppercase text-brand-dark">
+                    Complementary Logistics Solutions
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {relatedServices.map((rel) => (
+                      <Link
+                        key={rel.id}
+                        href={`/services/${rel.slug}`}
+                        className="group p-4 rounded-xl border border-brand-border hover:border-brand-blue/50 bg-white hover:bg-brand-bg transition-all"
+                      >
+                        <h4 className="text-sm font-bold text-brand-dark group-hover:text-brand-blue transition-colors leading-snug">
+                          {rel.title}
+                        </h4>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-blue mt-2">
+                          <span>Details</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Pre-configured Quote Form */}
+              <div className="lg:col-span-5 sticky top-28">
+                <div className="mb-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+                    Direct Booking Enquiry
+                  </span>
+                  <h3 className="text-2xl font-heading uppercase text-brand-dark">
+                    Request a Quote for {service.title}
+                  </h3>
+                </div>
+                <QuoteForm defaultService={service.title} />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
