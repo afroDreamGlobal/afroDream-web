@@ -33,6 +33,10 @@ export const metadata: Metadata = {
     'port clearing POD',
   ],
   authors: [{ name: 'Afro Dream Global' }],
+  icons: {
+    icon: '/images/logo.png',
+    apple: '/images/logo.png',
+  },
   openGraph: {
     title: 'Afro Dream Global — Connecting Africa to Global Markets',
     description:

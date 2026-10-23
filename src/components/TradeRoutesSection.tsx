@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { TradeRoute } from '@/lib/types';
-import { Navigation, Clock, ArrowRight, Share2, ShieldCheck, Anchor } from 'lucide-react';
+import { MapPin, ArrowRight, Anchor, ShieldCheck, Ship, Clock, CheckCircle2 } from 'lucide-react';
 
 interface TradeRoutesSectionProps {
   routes?: TradeRoute[];
@@ -11,622 +11,511 @@ interface TradeRoutesSectionProps {
 
 type TabType = 'INDIA' | 'VIETNAM' | 'GLOBAL';
 
-interface PortDetail {
+interface PortItem {
   name: string;
-  role: string;
   state: string;
   transit: string;
+  coords: { x: number; y: number };
 }
 
-const DESTINATION_DATA: Record<
+const REGION_DATA: Record<
   TabType,
   {
-    title: string;
-    corridorTitle: string;
-    corridorRoute: string;
-    portsCount: string;
-    portsLabel: string;
-    transitRange: string;
-    transitLabel: string;
-    supportTitle: string;
-    supportLabel: string;
-    ports: PortDetail[];
+    corridorName: string;
+    description: string;
+    ports: PortItem[];
   }
 > = {
   INDIA: {
-    title: 'DIRECT DISCHARGE PORTS IN INDIA',
-    corridorTitle: 'ACTIVE SEASONAL CORRIDOR',
-    corridorRoute: 'BISSAU PORT TO TUTICORIN & MANGALORE',
-    portsCount: '4',
-    portsLabel: 'Indian Ports',
-    transitRange: '15-21',
-    transitLabel: 'Days Transit',
-    supportTitle: 'End-to-End',
-    supportLabel: 'Logistics Support',
+    corridorName: 'Tanzania & West Africa to India Corridors',
+    description:
+      'Direct container and bulk vessel shipments to primary cashew processing centers in Tamil Nadu, Karnataka, Gujarat, and Andhra Pradesh.',
     ports: [
-      {
-        name: 'Tuticorin Port',
-        role: 'Major Cashew & Commodity Hub',
-        state: 'Tamil Nadu',
-        transit: '14-16 Days',
-      },
-      {
-        name: 'Mangalore Port',
-        role: 'Key Processing Terminal',
-        state: 'Karnataka',
-        transit: '16-18 Days',
-      },
-      {
-        name: 'Visakhapatnam Port',
-        role: 'East Coast Gateway',
-        state: 'Andhra Pradesh',
-        transit: '18-20 Days',
-      },
-      {
-        name: 'Mundra Port',
-        role: 'High-Capacity Deep Sea Terminal',
-        state: 'Gujarat',
-        transit: '18-21 Days',
-      },
+      { name: 'Tuticorin', state: 'Tamil Nadu', transit: '14-16 Days', coords: { x: 545, y: 225 } },
+      { name: 'Mangalore', state: 'Karnataka', transit: '16-18 Days', coords: { x: 535, y: 205 } },
+      { name: 'Visakhapatnam', state: 'Andhra Pradesh', transit: '18-21 Days', coords: { x: 565, y: 180 } },
+      { name: 'Mundra', state: 'Gujarat', transit: '18-20 Days', coords: { x: 525, y: 155 } },
     ],
   },
   VIETNAM: {
-    title: 'DIRECT DISCHARGE PORTS IN VIETNAM',
-    corridorTitle: 'ACTIVE SEASONAL CORRIDOR',
-    corridorRoute: 'MTWARA & BISSAU TO VIETNAM TERMINALS',
-    portsCount: '4',
-    portsLabel: 'Vietnam Ports',
-    transitRange: '18-24',
-    transitLabel: 'Days Transit',
-    supportTitle: 'End-to-End',
-    supportLabel: 'Clearing & Delivery',
+    corridorName: 'Africa to Vietnam Industrial Terminals',
+    description:
+      'Scheduled containerized freight connecting Mtwara Port to southern and northern manufacturing hubs across Vietnam.',
     ports: [
-      {
-        name: 'Ho Chi Minh Port (Cat Lai)',
-        role: 'Primary Cashew Import Terminal',
-        state: 'Southern Vietnam',
-        transit: '18-22 Days',
-      },
-      {
-        name: 'Hai Phong Port',
-        role: 'Northern Trade Gateway',
-        state: 'Northern Vietnam',
-        transit: '22-26 Days',
-      },
-      {
-        name: 'Da Nang Port',
-        role: 'Central Coastal Terminal',
-        state: 'Central Vietnam',
-        transit: '20-24 Days',
-      },
-      {
-        name: 'Quy Nhon Port',
-        role: 'Agro Commodity Terminal',
-        state: 'Binh Dinh',
-        transit: '19-23 Days',
-      },
+      { name: 'Ho Chi Minh', state: 'Southern Vietnam', transit: '18-22 Days', coords: { x: 635, y: 215 } },
+      { name: 'Hai Phong', state: 'Northern Vietnam', transit: '22-25 Days', coords: { x: 640, y: 175 } },
+      { name: 'Da Nang', state: 'Central Vietnam', transit: '20-23 Days', coords: { x: 638, y: 195 } },
+      { name: 'Quy Nhon', state: 'Binh Dinh Province', transit: '19-22 Days', coords: { x: 645, y: 205 } },
     ],
   },
   GLOBAL: {
-    title: 'GLOBAL STRATEGIC TRADE HUBS',
-    corridorTitle: 'WORLDWIDE MARITIME NETWORK',
-    corridorRoute: 'AFRICA TO EUROPE & MIDDLE EAST',
-    portsCount: 'Global',
-    portsLabel: 'Trade Corridors',
-    transitRange: '10-28',
-    transitLabel: 'Days Transit',
-    supportTitle: 'Multimodal',
-    supportLabel: 'Global Logistics',
+    corridorName: 'African Ports to Middle East & Europe',
+    description:
+      'Strategic maritime connections linking African coastal trade to worldwide transshipment megahubs and European gateways.',
     ports: [
-      {
-        name: 'Rotterdam & Antwerp',
-        role: 'Western European Commodity Hub',
-        state: 'Netherlands / Belgium',
-        transit: '24-28 Days',
-      },
-      {
-        name: 'Jebel Ali Port',
-        role: 'Middle East Transshipment Hub',
-        state: 'Dubai, UAE',
-        transit: '10-14 Days',
-      },
-      {
-        name: 'Singapore Port',
-        role: 'Asia-Pacific Transshipment Center',
-        state: 'Singapore',
-        transit: '14-17 Days',
-      },
-      {
-        name: 'Port of Valencia',
-        role: 'Mediterranean Inbound Gateway',
-        state: 'Spain / Europe',
-        transit: '22-26 Days',
-      },
+      { name: 'Jebel Ali (Dubai)', state: 'UAE', transit: '10-13 Days', coords: { x: 495, y: 160 } },
+      { name: 'Rotterdam', state: 'Netherlands', transit: '24-28 Days', coords: { x: 385, y: 85 } },
+      { name: 'Singapore', state: 'Asia-Pacific Hub', transit: '14-17 Days', coords: { x: 625, y: 245 } },
+      { name: 'Valencia', state: 'Spain / Europe', transit: '21-25 Days', coords: { x: 360, y: 110 } },
     ],
   },
 };
 
 export default function TradeRoutesSection({ routes }: TradeRoutesSectionProps) {
   const [activeTab, setActiveTab] = useState<TabType>('INDIA');
-  const currentData = DESTINATION_DATA[activeTab];
+  const [selectedPort, setSelectedPort] = useState<string>('Tuticorin');
 
-  const renderPillTabs = (extraClasses = '') => (
-    <div
-      className={`inline-flex items-center bg-white p-1 rounded-2xl shadow-sm border border-slate-200 ${extraClasses}`}
-    >
-      {(['INDIA', 'VIETNAM', 'GLOBAL'] as const).map((tab) => (
-        <button
-          key={tab}
-          onClick={() => setActiveTab(tab)}
-          className={`px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer ${
-            activeTab === tab
-              ? 'bg-brand-blue text-white shadow-md shadow-brand-blue/30'
-              : 'text-slate-500 hover:text-slate-900 bg-transparent'
-          }`}
-        >
-          {tab}
-        </button>
-      ))}
-    </div>
-  );
+  const currentRegion = REGION_DATA[activeTab];
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    setSelectedPort(REGION_DATA[tab].ports[0].name);
+  };
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-[#F8FAFC] border-t border-slate-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header with Pill Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
-          <div>
-            <span className="text-xs sm:text-sm font-bold tracking-[0.2em] uppercase text-brand-blue block mb-1.5 font-sans">
+    <section
+      id="trade-routes-section"
+      className="py-14 sm:py-18 lg:py-20 bg-gradient-to-r from-[#F0F7FF] via-[#EBF4FE] to-[#F2F8FF] border-y border-blue-100 text-slate-900 relative overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* ========================================================================= */}
+        {/* MAIN 3-ZONE DISPLAY MATCHING REFERRAL IMAGE                               */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
+          {/* ----------------------------------------------------------------------- */}
+          {/* ZONE 1 (LEFT): BRAND TITLE HEADLINE                                     */}
+          {/* ----------------------------------------------------------------------- */}
+          <div className="lg:col-span-3 flex flex-col justify-center">
+            <span className="text-xs sm:text-sm font-bold tracking-[0.2em] uppercase text-slate-900 block mb-1 font-sans">
               TRADE ROUTES
             </span>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-heading uppercase text-slate-900 tracking-tight leading-none">
-              FROM AFRICA TO GLOBAL MARKETS
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading uppercase text-brand-blue leading-[0.92] tracking-tight">
+              FROM AFRICA TO <br />
+              GLOBAL MARKETS
             </h2>
-          </div>
 
-          {/* Desktop Region Tabs (Unchanged on Desktop Screen, Hidden on Mobile) */}
-          {renderPillTabs('hidden lg:inline-flex')}
-        </div>
+            <p className="text-xs sm:text-sm text-slate-600 font-light mt-4 leading-relaxed max-w-sm hidden sm:block">
+              Direct ocean freight, specialized RCN container stuffing, and scheduled bulk vessels
+              connecting <strong className="text-slate-900 font-medium">Mtwara Port (TZ)</strong> &{' '}
+              <strong className="text-slate-900 font-medium">Bissau (GW)</strong> to international trade clusters.
+            </p>
 
-        {/* 2-Column Exact Layout: Left Discharge Ports Card + Right Map Visualizer */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-          {/* Mobile Region Tabs: Placed Directly Below Image/Map Section on Mobile Only */}
-          <div className="order-2 lg:hidden flex justify-center w-full py-1">
-            {renderPillTabs()}
-          </div>
-
-          {/* ========================================================================= */}
-          {/* LEFT CARD: DIRECT DISCHARGE PORTS (On mobile: order-3, below tabs & map)  */}
-          {/* ========================================================================= */}
-          <div className="order-3 lg:order-1 lg:col-span-5 flex flex-col justify-between bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-200/90 hover:shadow-md transition-shadow">
-            <div>
-              {/* Card Header with Icon */}
-              <div className="flex items-center gap-2.5 pb-4 mb-4 border-b border-slate-100">
-                <Navigation className="w-4 h-4 text-brand-blue stroke-[2.5]" />
-                <h3 className="font-heading text-lg sm:text-xl uppercase text-slate-900 tracking-wide">
-                  {currentData.title}
-                </h3>
-              </div>
-
-              {/* Ports List (Exact Style & Arrangement) */}
-              <div className="space-y-3">
-                {currentData.ports.map((port, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 hover:bg-blue-50/40 border border-slate-100 transition-colors flex items-center justify-between gap-3"
-                  >
-                    <div className="flex items-center gap-3.5">
-                      {/* Port Bullet with Outer Ring */}
-                      <div className="w-6 h-6 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-                        <div className="w-2 h-2 rounded-full bg-brand-blue" />
-                      </div>
-
-                      {/* Port Name & Role */}
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900 leading-tight">
-                          {port.name}
-                        </h4>
-                        <p className="text-xs text-slate-500 mt-0.5 leading-snug">
-                          {port.role}
-                        </p>
-                        <span className="inline-block mt-0.5 text-xs font-semibold text-brand-blue">
-                          {port.state}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Transit Time */}
-                    <div className="text-right flex-shrink-0">
-                      <span className="text-xs sm:text-sm font-bold text-slate-800 block">
-                        {port.transit}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-normal">
-                        Transit Time
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Bottom Card Footer */}
-            <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="text-xs text-slate-600">
-                <span className="font-bold text-slate-900">Origin: </span>
-                <span>Mtwara Port (Tanzania), Bissau (Guinea-Bissau)</span>
-              </div>
-
+            <div className="mt-5 pt-2 hidden sm:block">
               <Link
                 href="/quote"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-blue hover:bg-brand-blue-hover text-white font-bold text-xs shadow-md shadow-brand-blue/30 transition-all flex-shrink-0 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-blue hover:text-brand-blue-hover transition-colors"
               >
-                <span>Get Quote</span>
+                <span>Request Route Rate</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* RIGHT CARD: DARK NAVY MARITIME MAP & METRICS (On mobile: order-1, on top) */}
-          {/* ========================================================================= */}
-          <div className="order-1 lg:order-2 lg:col-span-7 flex flex-col justify-between bg-[#0B1728] rounded-3xl p-4 sm:p-6 lg:p-7 shadow-xl border border-[#1E2E42] text-white relative overflow-hidden">
-            {/* Top-Left Active Corridor Badge */}
-            <div className="relative z-10 self-start mb-3 sm:mb-4">
-              <div className="inline-flex flex-col bg-[#11243D]/90 backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-cyan-500/20 shadow-lg">
-                <div className="flex items-center gap-2 text-cyan-400 font-bold text-[10px] sm:text-[11px] tracking-wider uppercase">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                  <span>{currentData.corridorTitle}</span>
-                </div>
-                <div className="text-[11px] sm:text-xs text-slate-200 font-semibold tracking-wide mt-0.5 uppercase">
-                  {currentData.corridorRoute}
-                </div>
-              </div>
-            </div>
-
-            {/* Interactive World Route Vector Map — Comfortable Height on Mobile */}
-            <div className="relative w-full h-[230px] sm:h-[300px] lg:h-auto lg:aspect-[16/9] flex items-center justify-center my-auto">
+          {/* ----------------------------------------------------------------------- */}
+          {/* ZONE 2 (CENTER): DOTTED WORLD MATRIX MAP WITH RADIATING ARCS            */}
+          {/* ----------------------------------------------------------------------- */}
+          <div className="lg:col-span-6 relative w-full flex items-center justify-center">
+            <div className="w-full aspect-[16/9] max-h-[360px] relative select-none">
               <svg
-                viewBox="0 0 820 440"
-                className="w-full h-full select-none"
+                viewBox="0 0 800 400"
+                className="w-full h-full"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <defs>
-                  {/* Glow Filters */}
-                  <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                  <filter id="blueGlow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="5" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
+                  {/* General World Continents Dot Pattern */}
+                  <pattern
+                    id="worldDotMatrix"
+                    x="0"
+                    y="0"
+                    width="9"
+                    height="9"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle cx="4.5" cy="4.5" r="1.5" fill="#93C5FD" />
+                  </pattern>
 
-                  {/* Ocean Gradients */}
-                  <radialGradient id="oceanGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#1E3A5F" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#0B1728" stopOpacity="0" />
-                  </radialGradient>
+                  {/* Africa Highlighted Dot Pattern (Denser & Vibrant Blue) */}
+                  <pattern
+                    id="africaDotMatrix"
+                    x="0"
+                    y="0"
+                    width="9"
+                    height="9"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle cx="4.5" cy="4.5" r="2.1" fill="#0284C7" />
+                  </pattern>
+
+                  {/* Soft Route Glow Filter */}
+                  <filter id="routeArcGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
                 </defs>
 
-                {/* Ocean Atmosphere Glow */}
-                <ellipse cx="460" cy="220" rx="320" ry="170" fill="url(#oceanGlow)" />
-
-                {/* Latitude / Longitude Subtle Navigation Grid */}
-                <g stroke="#182A40" strokeWidth="0.8" strokeDasharray="3 4">
-                  <line x1="40" y1="110" x2="780" y2="110" />
-                  <line x1="40" y1="220" x2="780" y2="220" />
-                  <line x1="40" y1="330" x2="780" y2="330" />
-                  <line x1="180" y1="30" x2="180" y2="400" />
-                  <line x1="380" y1="30" x2="380" y2="400" />
-                  <line x1="580" y1="30" x2="580" y2="400" />
-                </g>
-
                 {/* ===================================================== */}
-                {/* CONTINENT SILHOUETTES                                 */}
+                {/* DOTTED CONTINENT SILHOUETTES                          */}
                 {/* ===================================================== */}
-                {/* Europe Silhouette */}
+                {/* North America */}
                 <path
-                  d="M190 70 L250 65 L270 90 L240 120 L210 115 Z"
-                  fill="#13243A"
-                  stroke="#1D385A"
-                  strokeWidth="1"
-                  opacity="0.7"
+                  d="M 60 60 L 120 40 L 210 50 L 240 85 L 210 130 L 180 145 L 160 175 L 140 170 L 115 140 L 95 105 Z 
+                     M 215 25 L 260 30 L 250 55 L 215 50 Z"
+                  fill="url(#worldDotMatrix)"
                 />
 
-                {/* Africa Continent Silhouette */}
+                {/* South America */}
                 <path
-                  d="M170 140 
-                     C220 130, 290 140, 310 160 
-                     C325 180, 335 220, 340 250 
-                     C330 290, 310 350, 275 380 
-                     C250 395, 235 370, 220 330 
-                     C200 280, 165 240, 150 210 
-                     C140 180, 155 150, 170 140 Z"
-                  fill="#13253C"
-                  stroke="#21426B"
-                  strokeWidth="1.2"
+                  d="M 185 195 L 235 200 L 265 235 L 255 285 L 225 350 L 205 340 L 195 280 L 175 230 Z"
+                  fill="url(#worldDotMatrix)"
                 />
 
-                {/* Arabian Peninsula */}
+                {/* Europe */}
                 <path
-                  d="M345 160 L385 155 L405 195 L375 220 L345 190 Z"
-                  fill="#13253C"
-                  stroke="#1E3D63"
-                  strokeWidth="1"
-                  opacity="0.8"
+                  d="M 345 70 L 405 60 L 435 85 L 415 120 L 365 120 L 345 95 Z 
+                     M 370 35 L 410 30 L 405 55 L 375 60 Z"
+                  fill="url(#worldDotMatrix)"
                 />
 
-                {/* India Subcontinent Silhouette */}
+                {/* Africa (Highlighted in Rich Blue Dots) */}
                 <path
-                  d="M470 150 
-                     C500 150, 540 160, 560 180 
-                     C575 210, 550 250, 530 285 
-                     C515 295, 505 270, 490 240 
-                     C475 200, 465 170, 470 150 Z"
-                  fill="#162B46"
-                  stroke="#2A5487"
-                  strokeWidth="1.2"
+                  d="M 335 145 
+                     C 380 135, 430 145, 445 165 
+                     C 460 185, 470 225, 460 255 
+                     C 450 295, 435 340, 400 355 
+                     C 380 365, 365 335, 355 300 
+                     C 335 260, 310 225, 305 200 
+                     C 300 175, 320 155, 335 145 Z"
+                  fill="url(#africaDotMatrix)"
                 />
 
-                {/* Southeast Asia / Vietnam Silhouette */}
+                {/* Asia Landmass */}
                 <path
-                  d="M610 170 
-                     C640 175, 660 190, 665 220 
-                     C655 250, 640 270, 620 285 
-                     C605 260, 595 220, 610 170 Z"
-                  fill="#13253C"
-                  stroke="#204068"
-                  strokeWidth="1"
+                  d="M 435 70 L 525 55 L 625 65 L 685 105 L 655 155 L 625 170 L 590 155 L 535 125 L 480 135 L 435 100 Z"
+                  fill="url(#worldDotMatrix)"
+                />
+
+                {/* India Subcontinent */}
+                <path
+                  d="M 505 145 
+                     C 530 145, 555 155, 565 175 
+                     C 575 200, 555 230, 540 255 
+                     C 525 260, 515 240, 505 215 
+                     C 495 185, 490 160, 505 145 Z"
+                  fill="url(#worldDotMatrix)"
+                />
+
+                {/* Southeast Asia & Vietnam */}
+                <path
+                  d="M 590 165 L 630 170 L 645 200 L 635 235 L 610 250 L 595 230 L 590 190 Z 
+                     M 610 265 L 655 265 L 645 280 L 605 280 Z"
+                  fill="url(#worldDotMatrix)"
+                />
+
+                {/* Australia */}
+                <path
+                  d="M 645 275 L 715 270 L 735 305 L 720 345 L 670 350 L 645 315 Z"
+                  fill="url(#worldDotMatrix)"
                 />
 
                 {/* ===================================================== */}
-                {/* SHIPPING ROUTE ARCS (MATCHING REFERRAL ARCS)          */}
+                {/* RADIATING CURVED MARITIME SHIPPING ARCS               */}
                 {/* ===================================================== */}
-                {/* Arc 1: Long Curved Ocean Route from Bissau (West Africa) around Cape of Good Hope into Indian Ocean */}
+                {/* Ambient Trans-Atlantic Arc to the West (Matches referral image) */}
                 <path
-                  d="M175 220 C130 330, 230 420, 360 380 C440 350, 490 300, 520 260"
+                  d="M 335 200 C 270 200, 215 220, 185 240"
                   stroke="#38BDF8"
-                  strokeWidth="2.5"
-                  strokeDasharray="5 4"
+                  strokeWidth="1.8"
                   strokeLinecap="round"
-                  opacity="0.9"
-                  filter="url(#cyanGlow)"
+                  opacity="0.65"
+                  filter="url(#routeArcGlow)"
                 />
+                <circle cx="185" cy="240" r="3" fill="#0284C7" />
 
-                {/* Arc 2: Primary Route from Mombasa / Dar Es Salaam / Mtwara to Tuticorin & Mangalore */}
+                {/* North Atlantic Arc to Europe */}
                 <path
-                  d="M315 275 C370 290, 435 290, 520 260"
+                  d="M 350 170 C 340 120, 360 90, 385 85"
                   stroke="#38BDF8"
-                  strokeWidth="2.8"
-                  strokeDasharray="6 4"
+                  strokeWidth="1.6"
                   strokeLinecap="round"
-                  filter="url(#cyanGlow)"
+                  opacity="0.65"
+                  filter="url(#routeArcGlow)"
                 />
 
-                {/* Arc 3: Branch to Mangalore */}
-                <path
-                  d="M315 275 C390 270, 440 255, 495 235"
-                  stroke="#60A5FA"
-                  strokeWidth="2"
-                  strokeDasharray="4 3"
-                  opacity="0.8"
-                />
+                {/* Dynamic Active Corridor Arcs to Indian Ocean & Asia */}
+                {activeTab === 'INDIA' && (
+                  <>
+                    {/* Arc 1: Africa to Tuticorin */}
+                    <path
+                      d="M 430 255 C 475 265, 515 250, 545 225"
+                      stroke="#0284C7"
+                      strokeWidth="2.4"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      filter="url(#routeArcGlow)"
+                    />
 
-                {/* Arc 4: Branch to Mundra (Gujarat) */}
-                <path
-                  d="M315 275 C390 230, 440 195, 485 175"
-                  stroke="#60A5FA"
-                  strokeWidth="2"
-                  strokeDasharray="4 3"
-                  opacity="0.7"
-                />
+                    {/* Arc 2: Africa to Mangalore */}
+                    <path
+                      d="M 430 255 C 465 240, 500 225, 535 205"
+                      stroke="#38BDF8"
+                      strokeWidth="2"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      opacity="0.85"
+                    />
 
-                {/* Arc 5: Branch to Visakhapatnam (East Coast India) */}
-                <path
-                  d="M520 260 C545 255, 560 235, 565 210"
-                  stroke="#38BDF8"
-                  strokeWidth="2"
-                  strokeDasharray="4 3"
-                  opacity="0.8"
-                />
+                    {/* Arc 3: Africa to Visakhapatnam */}
+                    <path
+                      d="M 430 255 C 480 230, 525 200, 565 180"
+                      stroke="#0284C7"
+                      strokeWidth="2.2"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      filter="url(#routeArcGlow)"
+                    />
 
-                {/* If VIETNAM or GLOBAL tab active, show extended routes to Vietnam / Far East */}
-                {activeTab !== 'INDIA' && (
-                  <path
-                    d="M520 260 C580 300, 625 280, 650 235"
-                    stroke="#38BDF8"
-                    strokeWidth="2.5"
-                    strokeDasharray="5 4"
-                    strokeLinecap="round"
-                    filter="url(#cyanGlow)"
-                  />
+                    {/* Arc 4: Africa to Mundra */}
+                    <path
+                      d="M 430 255 C 460 205, 495 175, 525 155"
+                      stroke="#38BDF8"
+                      strokeWidth="2"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      opacity="0.8"
+                    />
+                  </>
                 )}
 
-                {/* ===================================================== */}
-                {/* ORIGIN PORTS (GLOWING BEACONS)                        */}
-                {/* ===================================================== */}
-                {/* 1. BISSAU (GW) */}
-                <g transform="translate(175, 220)">
-                  <circle cx="0" cy="0" r="14" fill="#38BDF8" opacity="0.15" />
-                  <circle cx="0" cy="0" r="8" fill="#38BDF8" opacity="0.4" />
-                  <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" filter="url(#cyanGlow)" />
-                  <text
-                    x="-65"
-                    y="-8"
-                    fill="#FFFFFF"
-                    fontSize="11"
-                    fontWeight="800"
-                    letterSpacing="0.05em"
-                  >
-                    BISSAU (GW)
-                  </text>
-                </g>
-
-                {/* 2. MOMBASA / DAR ES SALAAM / MTWARA (Positioned Left to Avoid Overlap with Indian Ocean Routes) */}
-                <g transform="translate(315, 275)">
-                  <circle cx="0" cy="0" r="14" fill="#38BDF8" opacity="0.15" />
-                  <circle cx="0" cy="0" r="8" fill="#38BDF8" opacity="0.4" />
-                  <circle cx="0" cy="0" r="5" fill="#FFFFFF" filter="url(#cyanGlow)" />
-                  <text
-                    x="-92"
-                    y="-2"
-                    fill="#FFFFFF"
-                    fontSize="10"
-                    fontWeight="700"
-                    letterSpacing="0.04em"
-                  >
-                    MOMBASA
-                  </text>
-                  <text
-                    x="-92"
-                    y="10"
-                    fill="#94A3B8"
-                    fontSize="9.5"
-                    fontWeight="600"
-                    letterSpacing="0.04em"
-                  >
-                    DAR ES SALAAM
-                  </text>
-                </g>
-
-                {/* ===================================================== */}
-                {/* DESTINATION PORTS (INDIA)                             */}
-                {/* ===================================================== */}
-                {/* 1. MUNDRA */}
-                <g transform="translate(485, 175)">
-                  <circle cx="0" cy="0" r="3.5" fill="#38BDF8" />
-                  <text
-                    x="8"
-                    y="-5"
-                    fill="#CBD5E1"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    letterSpacing="0.05em"
-                  >
-                    MUNDRA
-                  </text>
-                </g>
-
-                {/* 2. MANGALORE (Positioned to Right to Avoid Clashing with East Africa) */}
-                <g transform="translate(495, 235)">
-                  <circle cx="0" cy="0" r="4" fill="#38BDF8" />
-                  <text
-                    x="8"
-                    y="3"
-                    fill="#FFFFFF"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    letterSpacing="0.05em"
-                  >
-                    MANGALORE
-                  </text>
-                </g>
-
-                {/* 3. TUTICORIN (PRIMARY GLOWING HUB - Positioned Below Node) */}
-                <g transform="translate(520, 260)">
-                  <circle cx="0" cy="0" r="16" fill="#38BDF8" opacity="0.2" />
-                  <circle cx="0" cy="0" r="9" fill="#38BDF8" opacity="0.45" />
-                  <circle cx="0" cy="0" r="5.5" fill="#FFFFFF" filter="url(#cyanGlow)" />
-                  <text
-                    x="10"
-                    y="16"
-                    fill="#38BDF8"
-                    fontSize="10"
-                    fontWeight="800"
-                    letterSpacing="0.05em"
-                  >
-                    TUTICORIN
-                  </text>
-                </g>
-
-                {/* 4. VISAKHAPATNAM */}
-                <g transform="translate(565, 210)">
-                  <circle cx="0" cy="0" r="3.5" fill="#38BDF8" />
-                  <text
-                    x="8"
-                    y="-3"
-                    fill="#E2E8F0"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    letterSpacing="0.05em"
-                  >
-                    VISAKHAPATNAM
-                  </text>
-                </g>
-
-                {/* VIETNAM HUBS (RENDERED WHEN ACTIVE) */}
                 {activeTab === 'VIETNAM' && (
-                  <g transform="translate(650, 235)">
-                    <circle cx="0" cy="0" r="14" fill="#38BDF8" opacity="0.2" />
-                    <circle cx="0" cy="0" r="5" fill="#FFFFFF" filter="url(#cyanGlow)" />
-                    <text
-                      x="10"
-                      y="4"
-                      fill="#38BDF8"
-                      fontSize="10"
-                      fontWeight="800"
-                      letterSpacing="0.05em"
-                    >
-                      HO CHI MINH (VN)
-                    </text>
-                  </g>
+                  <>
+                    {/* Extended Ocean Arc to Vietnam (Ho Chi Minh) */}
+                    <path
+                      d="M 430 255 C 490 270, 560 250, 635 215"
+                      stroke="#0284C7"
+                      strokeWidth="2.6"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      filter="url(#routeArcGlow)"
+                    />
+                    {/* Arc to Hai Phong */}
+                    <path
+                      d="M 430 255 C 500 240, 570 205, 640 175"
+                      stroke="#38BDF8"
+                      strokeWidth="2"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      opacity="0.85"
+                    />
+                  </>
                 )}
+
+                {activeTab === 'GLOBAL' && (
+                  <>
+                    {/* Arc to Dubai / Jebel Ali */}
+                    <path
+                      d="M 430 255 C 455 210, 475 180, 495 160"
+                      stroke="#0284C7"
+                      strokeWidth="2.4"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      filter="url(#routeArcGlow)"
+                    />
+                    {/* Arc to Singapore */}
+                    <path
+                      d="M 430 255 C 490 280, 560 270, 625 245"
+                      stroke="#38BDF8"
+                      strokeWidth="2.2"
+                      className="animate-sea-route"
+                      strokeLinecap="round"
+                      opacity="0.85"
+                    />
+                  </>
+                )}
+
+                {/* ===================================================== */}
+                {/* ORIGIN & DESTINATION GLOWING BEACONS                  */}
+                {/* ===================================================== */}
+                {/* East Africa Base (Mtwara / Dar Es Salaam) */}
+                <g transform="translate(430, 255)">
+                  <circle cx="0" cy="0" r="10" fill="#0284C7" opacity="0.25" />
+                  <circle cx="0" cy="0" r="5" fill="#0284C7" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="0" cy="0" r="2" fill="#FFFFFF" />
+                </g>
+
+                {/* Destination Nodes for Active Tab */}
+                {currentRegion.ports.map((port) => {
+                  const isSelected = selectedPort === port.name;
+                  return (
+                    <g
+                      key={port.name}
+                      transform={`translate(${port.coords.x}, ${port.coords.y})`}
+                      onClick={() => setSelectedPort(port.name)}
+                      className="cursor-pointer"
+                    >
+                      <circle
+                        cx="0"
+                        cy="0"
+                        r={isSelected ? 10 : 7}
+                        fill="#0284C7"
+                        opacity={isSelected ? 0.35 : 0.2}
+                      />
+                      <circle
+                        cx="0"
+                        cy="0"
+                        r={isSelected ? 5 : 4}
+                        fill="#0284C7"
+                        stroke="#FFFFFF"
+                        strokeWidth="1.5"
+                      />
+                    </g>
+                  );
+                })}
               </svg>
             </div>
+          </div>
 
-            {/* Bottom 3-Column Metric Bar — Clean Stacking on Mobile, Horizontal on Desktop */}
-            <div className="relative z-10 pt-3 sm:pt-4 mt-2 sm:mt-4 border-t border-[#1C314C] grid grid-cols-3 divide-x divide-[#1C314C]">
-              {/* Metric 1: Ports */}
-              <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1 sm:gap-3 px-1 sm:px-4">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
-                  <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.2]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-base sm:text-xl lg:text-2xl font-bold text-white leading-none whitespace-nowrap">
-                    {currentData.portsCount}
-                  </div>
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 leading-tight whitespace-nowrap">
-                    {currentData.portsLabel}
-                  </div>
-                </div>
-              </div>
+          {/* ----------------------------------------------------------------------- */}
+          {/* ZONE 3 (RIGHT): TABS & VERTICAL PORT LIST (EXACT REFERRAL MATCH)        */}
+          {/* ----------------------------------------------------------------------- */}
+          <div className="lg:col-span-3 flex flex-col justify-center">
+            {/* Horizontal Region Tabs */}
+            <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
+              <button
+                onClick={() => handleTabChange('INDIA')}
+                className={`text-xs font-bold uppercase transition-all duration-200 cursor-pointer ${
+                  activeTab === 'INDIA'
+                    ? 'bg-brand-blue text-white rounded-lg px-4 py-1.5 shadow-sm'
+                    : 'text-slate-900 hover:text-brand-blue px-2.5 py-1.5'
+                }`}
+              >
+                INDIA
+              </button>
 
-              {/* Metric 2: Transit */}
-              <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1 sm:gap-3 px-1 sm:px-4">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
-                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.2]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-base sm:text-xl lg:text-2xl font-bold text-white leading-none whitespace-nowrap">
-                    {currentData.transitRange}
-                  </div>
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 leading-tight whitespace-nowrap">
-                    {currentData.transitLabel}
-                  </div>
-                </div>
-              </div>
+              <button
+                onClick={() => handleTabChange('VIETNAM')}
+                className={`text-xs font-bold uppercase transition-all duration-200 cursor-pointer ${
+                  activeTab === 'VIETNAM'
+                    ? 'bg-brand-blue text-white rounded-lg px-4 py-1.5 shadow-sm'
+                    : 'text-slate-900 hover:text-brand-blue px-2.5 py-1.5'
+                }`}
+              >
+                VIETNAM
+              </button>
 
-              {/* Metric 3: Support */}
-              <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1 sm:gap-3 px-1 sm:px-4">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
-                  <Anchor className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.2]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-xs sm:text-base font-bold text-white leading-none whitespace-nowrap">
-                    {currentData.supportTitle}
-                  </div>
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 leading-tight whitespace-nowrap">
-                    {currentData.supportLabel}
-                  </div>
-                </div>
-              </div>
+              <button
+                onClick={() => handleTabChange('GLOBAL')}
+                className={`text-xs font-bold uppercase transition-all duration-200 cursor-pointer ${
+                  activeTab === 'GLOBAL'
+                    ? 'bg-brand-blue text-white rounded-lg px-4 py-1.5 shadow-sm'
+                    : 'text-slate-900 hover:text-brand-blue px-2.5 py-1.5'
+                }`}
+              >
+                GLOBAL
+              </button>
+            </div>
+
+            {/* Horizontal Divider Line Matching Referral */}
+            <div className="border-b border-slate-300/80 mb-5 w-full" />
+
+            {/* Vertical Port List with Blue Location Pins */}
+            <div className="space-y-3.5">
+              {currentRegion.ports.map((port) => {
+                const isSelected = selectedPort === port.name;
+                return (
+                  <button
+                    key={port.name}
+                    onClick={() => setSelectedPort(port.name)}
+                    className="flex items-center justify-between w-full text-left group cursor-pointer py-1"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                        <MapPin
+                          className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+                            isSelected
+                              ? 'text-brand-blue fill-brand-blue/30 scale-110'
+                              : 'text-brand-blue fill-brand-blue/15'
+                          }`}
+                        />
+                      </div>
+                      <span
+                        className={`text-sm sm:text-base font-semibold transition-colors leading-none ${
+                          isSelected
+                            ? 'text-brand-blue font-bold'
+                            : 'text-slate-900 group-hover:text-brand-blue'
+                        }`}
+                      >
+                        {port.name}
+                      </span>
+                    </div>
+
+                    <span className="text-[11px] font-medium text-slate-500 bg-white/80 px-2 py-0.5 rounded border border-blue-100 shadow-2xs">
+                      {port.transit}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Direct Booking CTA */}
+            <div className="mt-7 pt-4 border-t border-slate-200/70">
+              <Link
+                href={`/quote?destination=${encodeURIComponent(selectedPort)}`}
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold shadow-md shadow-brand-blue/25 transition-all duration-200 active:scale-[0.98]"
+              >
+                <span>Book Vessel Space to {selectedPort}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* REFINED BOTTOM OPERATIONAL GUARANTEES STRIP                               */}
+        {/* ========================================================================= */}
+        <div className="mt-12 pt-8 border-t border-blue-200/60 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/70 backdrop-blur-sm border border-blue-100">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center flex-shrink-0">
+              <Anchor className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                Direct Mtwara & Bissau Loading
+              </h4>
+              <p className="text-[11px] text-slate-500 font-light mt-0.5">
+                Bypass congested Dar es Salaam transshipment.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/70 backdrop-blur-sm border border-blue-100">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                Zero Demurrage Guaranteed
+              </h4>
+              <p className="text-[11px] text-slate-500 font-light mt-0.5">
+                14 to 21-day container free time at discharge ports.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/70 backdrop-blur-sm border border-blue-100">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center flex-shrink-0">
+              <Ship className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                100% Ventilated RCN Fleet
+              </h4>
+              <p className="text-[11px] text-slate-500 font-light mt-0.5">
+                Moisture barriers for premium cashew kernel outturn.
+              </p>
             </div>
           </div>
         </div>

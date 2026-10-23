@@ -16,7 +16,7 @@ interface AboutSectionProps {
 }
 
 const DEFAULT_ABOUT_IMAGE =
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=85';
+  'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792682872/afrodreamglobal/afgudguzik42xzhqveoo.png';
 
 export default function AboutSection({
   headline = 'ABOUT AFRO DREAM GLOBAL',

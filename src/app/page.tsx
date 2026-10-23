@@ -8,6 +8,7 @@ import TradeRoutesSection from '@/components/TradeRoutesSection';
 import QuoteForm from '@/components/QuoteForm';
 import Footer from '@/components/Footer';
 import { store } from '@/lib/store';
+import { getLivePublishedServices } from '@/lib/services';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { SiteSettings } from '@/lib/types';
 import Link from 'next/link';
@@ -34,9 +35,42 @@ async function getLiveSettings(): Promise<SiteSettings> {
   return store.getSettings();
 }
 
+async function getLiveRoutes() {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('trade_routes')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return data.map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          originRegion: row.origin_region,
+          originCountry: row.origin_country,
+          originPort: row.origin_port,
+          destinationRegion: row.destination_region,
+          destinationCountry: row.destination_country,
+          destinationPort: row.destination_port,
+          transitTime: row.transit_time,
+          frequency: row.frequency,
+          cargoTypes: Array.isArray(row.cargo_types) ? row.cargo_types : [],
+          isActive: row.is_active ?? true,
+          isFeatured: row.is_featured ?? false,
+        }));
+      }
+    } catch (err) {
+      console.warn('[Supabase Routes Fetch Error]', err);
+    }
+  }
+  return store.getTradeRoutes();
+}
+
 export default async function HomePage() {
-  const services = store.getServices();
-  const tradeRoutes = store.getTradeRoutes();
+  const services = await getLivePublishedServices();
+  const tradeRoutes = await getLiveRoutes();
   const settings = await getLiveSettings();
 
   return (

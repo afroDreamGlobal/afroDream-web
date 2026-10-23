@@ -60,3 +60,39 @@ h1, h2, h3, .font-heading {
 .btn-dark {
   @apply inline-flex items-center justify-center font-semibold text-white bg-brand-dark hover:bg-black transition-all duration-200 active:scale-[0.98] rounded-md px-5 py-2.5 text-sm;
 }
+
+/* Maritime Animated Sea Lane & Radar Beacon Keyframes */
+@keyframes seaLaneFlow {
+  from {
+    stroke-dashoffset: 60;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes beaconPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.85;
+  }
+  70% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-sea-route {
+  stroke-dasharray: 7 5;
+  animation: seaLaneFlow 2.5s linear infinite;
+}
+
+.animate-sea-route-fast {
+  stroke-dasharray: 6 4;
+  animation: seaLaneFlow 1.6s linear infinite;
+}
+

@@ -4,7 +4,11 @@ import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { store } from '@/lib/store';
+import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { SiteSettings } from '@/lib/types';
 import { Shield, Globe, Award, Anchor, CheckCircle2, ArrowRight } from 'lucide-react';
+
+export const revalidate = 0;
 
 export const metadata = {
   title: 'About Us — Afro Dream Global | African Freight Forwarding & Logistics',
@@ -12,8 +16,34 @@ export const metadata = {
     'Learn about Afro Dream Global, our operations through CAJU SWIFT SARL in Guinea-Bissau since 2022, and our containerized Raw Cashew Nut shipping network in Tanzania.',
 };
 
-export default function AboutPage() {
-  const settings = store.getSettings();
+async function getLiveSettings(): Promise<SiteSettings> {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data } = await supabaseAdmin
+        .from('site_settings')
+        .select('settings_data')
+        .eq('id', 'primary')
+        .maybeSingle();
+
+      if (data?.settings_data) {
+        return { ...store.getSettings(), ...data.settings_data };
+      }
+    } catch (e) {
+      console.warn('[Supabase Settings Fetch]', e);
+    }
+  }
+  return store.getSettings();
+}
+
+export default async function AboutPage() {
+  const settings = await getLiveSettings();
+
+  const heroImage =
+    settings.heroBannerImageUrl ||
+    'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792683054/afrodreamglobal/qz5w6pmekttac4vuewhd.png';
+  const aboutImage =
+    settings.aboutImageUrl ||
+    'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792682872/afrodreamglobal/afgudguzik42xzhqveoo.png';
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -28,7 +58,7 @@ export default function AboutPage() {
         <section className="bg-brand-dark text-white py-20 lg:py-24 relative overflow-hidden">
           <div className="absolute inset-0 z-0 opacity-20">
             <Image
-              src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80"
+              src={heroImage}
               alt="Global logistics port"
               fill
               className="object-cover"
@@ -94,7 +124,7 @@ export default function AboutPage() {
               <div className="lg:col-span-6">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 aspect-[4/3]">
                   <Image
-                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80"
+                    src={aboutImage}
                     alt="Port cargo handling"
                     fill
                     className="object-cover"

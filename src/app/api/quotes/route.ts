@@ -77,7 +77,48 @@ export async function POST(request: Request) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapSupabaseToQuote(row: any) {
+  return {
+    id: row.id,
+    referenceNumber: row.reference_number,
+    customerName: row.customer_name,
+    companyName: row.company_name || undefined,
+    email: row.email,
+    phone: row.phone,
+    originCountry: row.origin_country,
+    originPort: row.origin_port,
+    destinationCountry: row.destination_country,
+    destinationPort: row.destination_port,
+    serviceType: row.service_type,
+    cargoDescription: row.cargo_description,
+    cargoWeight: row.cargo_weight || undefined,
+    cargoVolume: row.cargo_volume || undefined,
+    preferredDate: row.preferred_date || undefined,
+    additionalNotes: row.additional_notes || undefined,
+    status: row.status,
+    internalNotes: row.internal_notes || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 export async function GET() {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('quote_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        return NextResponse.json({ success: true, data: data.map(mapSupabaseToQuote) });
+      }
+    } catch (err) {
+      console.warn('[Supabase Quotes Fetch Error]', err);
+    }
+  }
+
   const quotes = store.getQuotes();
   return NextResponse.json({ success: true, data: quotes });
 }

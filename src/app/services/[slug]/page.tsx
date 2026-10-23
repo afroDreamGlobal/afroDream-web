@@ -3,10 +3,16 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import QuoteForm from '@/components/QuoteForm';
 import { store } from '@/lib/store';
+import { getLiveServiceBySlug, getLivePublishedServices } from '@/lib/services';
+import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { SiteSettings } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle2, Shield, Globe, Navigation, ChevronRight } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface ServiceDetailPageProps {
   params: {
@@ -14,21 +20,40 @@ interface ServiceDetailPageProps {
   };
 }
 
-export function generateStaticParams() {
-  const services = store.getServices();
+async function getLiveSettings(): Promise<SiteSettings> {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data } = await supabaseAdmin
+        .from('site_settings')
+        .select('settings_data')
+        .eq('id', 'primary')
+        .maybeSingle();
+
+      if (data?.settings_data) {
+        return { ...store.getSettings(), ...data.settings_data };
+      }
+    } catch (e) {
+      console.warn('[Supabase Settings Fetch]', e);
+    }
+  }
+  return store.getSettings();
+}
+
+export async function generateStaticParams() {
+  const services = await getLivePublishedServices();
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
-  const service = store.getServiceBySlug(params.slug);
+export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
+  const service = await getLiveServiceBySlug(params.slug);
 
   if (!service) {
     notFound();
   }
 
-  const allServices = store.getPublishedServices();
+  const allServices = await getLivePublishedServices();
   const relatedServices = allServices.filter((s) => s.id !== service.id).slice(0, 3);
-  const settings = store.getSettings();
+  const settings = await getLiveSettings();
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

@@ -7,7 +7,6 @@ import {
   Phone,
   Mail,
   MapPin,
-  ShieldCheck,
   ChevronDown,
   ArrowUpRight,
   Clock,
@@ -59,7 +58,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-10 sm:pb-14 border-b border-white/10">
           {/* Brand Column (Always visible, not an accordion) */}
           <div className="lg:col-span-4 space-y-4 sm:space-y-5">
-            <AfroDreamLogo variant="white" size="lg" />
+            <AfroDreamLogo variant="color" size="lg" />
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm font-light">
               Premier African shipping, freight forwarding, and multimodal logistics company.
               Specialized in containerized Raw Cashew Nut (RCN) exports and direct port clearing
@@ -267,14 +266,6 @@ export default function Footer() {
             <span className="text-slate-700 hidden sm:inline">•</span>
             <Link href="/about" className="hover:text-white transition-colors">
               Terms & Conditions
-            </Link>
-            <span className="text-slate-700 hidden sm:inline">•</span>
-            <Link
-              href="/admin/login"
-              className="hover:text-brand-blue text-slate-500 transition-colors flex items-center space-x-1"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Management</span>
             </Link>
           </div>
         </div>
