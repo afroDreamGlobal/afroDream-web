@@ -3,8 +3,12 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TradeRoutesSection from '@/components/TradeRoutesSection';
 import { store } from '@/lib/store';
+import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { TradeRoute, SiteSettings } from '@/lib/types';
 import Link from 'next/link';
 import { ArrowRight, Anchor, Navigation, Calendar } from 'lucide-react';
+
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Trade Routes & Port Corridors — Afro Dream Global',
@@ -12,9 +16,61 @@ export const metadata = {
     'Direct maritime trade corridors connecting Mtwara Port (Tanzania) and Bissau (Guinea-Bissau) with Tuticorin, Mangalore, Mundra, and Ho Chi Minh.',
 };
 
-export default function TradeRoutesPage() {
-  const routes = store.getTradeRoutes();
-  const settings = store.getSettings();
+async function getLiveRoutes(): Promise<TradeRoute[]> {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('trade_routes')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return data.map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          originRegion: row.origin_region,
+          originCountry: row.origin_country,
+          originPort: row.origin_port,
+          destinationRegion: row.destination_region,
+          destinationCountry: row.destination_country,
+          destinationPort: row.destination_port,
+          transitTime: row.transit_time,
+          frequency: row.frequency,
+          cargoTypes: Array.isArray(row.cargo_types) ? row.cargo_types : [],
+          isActive: row.is_active ?? true,
+          isFeatured: row.is_featured ?? false,
+        }));
+      }
+    } catch (err) {
+      console.warn('[Supabase Routes Fetch Error]', err);
+    }
+  }
+  return store.getTradeRoutes();
+}
+
+async function getLiveSettings(): Promise<SiteSettings> {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data } = await supabaseAdmin
+        .from('site_settings')
+        .select('settings_data')
+        .eq('id', 'primary')
+        .maybeSingle();
+
+      if (data?.settings_data) {
+        return { ...store.getSettings(), ...data.settings_data };
+      }
+    } catch (e) {
+      console.warn('[Supabase Settings Fetch]', e);
+    }
+  }
+  return store.getSettings();
+}
+
+export default async function TradeRoutesPage() {
+  const routes = await getLiveRoutes();
+  const settings = await getLiveSettings();
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

@@ -11,7 +11,7 @@ export const INITIAL_SERVICES: Service[] = [
     fullDescription:
       'Specialized international containerized shipping solutions connecting East and West Africa to global ports. We provide competitive freight rates, dedicated container leasing, seamless booking management, and comprehensive documentation support. Specially optimized for Raw Cashew Nut (RCN) traders, exporters, and international commodity buyers.',
     imageUrl:
-      'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1200&q=80',
+      'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792748916/afrodreamglobal/zwwvgmhgiptpmp2cbxe2.png',
     iconName: 'Container',
     category: 'Ocean Freight',
     displayOrder: 1,
@@ -34,7 +34,7 @@ export const INITIAL_SERVICES: Service[] = [
     fullDescription:
       'High-capacity breakbulk and dry bulk vessel chartering services for large commodity volumes. We manage vessel loading, berthing priority, stevedoring supervision, hatch inspection, and comprehensive maritime documentation across African deep-water terminals.',
     imageUrl:
-      'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=1200&q=80',
+      'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792749312/afrodreamglobal/ryjyhl2ir2of6omoucki.png',
     iconName: 'Ship',
     category: 'Maritime Cargo',
     displayOrder: 2,
@@ -57,7 +57,7 @@ export const INITIAL_SERVICES: Service[] = [
     fullDescription:
       'Reliable inland haulage and trucking networks covering southern and coastal Tanzania. We connect inland farms, collection centers, and primary warehouses directly to port storage facilities and ocean terminals, ensuring safety and zero transit delay for sensitive agricultural cargo.',
     imageUrl:
-      'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80',
+      'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792749462/afrodreamglobal/ht4kfr9ducofhynwik1r.png',
     iconName: 'Truck',
     category: 'Inland Logistics',
     displayOrder: 3,
@@ -80,7 +80,7 @@ export const INITIAL_SERVICES: Service[] = [
     fullDescription:
       'Professional customs brokerage and import clearance services at strategic destination ports across India and Southeast Asia. We navigate customs regulations, phytosanitary requirements, duty assessments, and port authority procedures for rapid cargo release.',
     imageUrl:
-      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80',
+      'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792749708/afrodreamglobal/vzcdhjiufjl1qhbrnitn.png',
     iconName: 'Anchor',
     category: 'Customs & Port Services',
     displayOrder: 4,
@@ -103,8 +103,8 @@ export const INITIAL_SERVICES: Service[] = [
     fullDescription:
       'True end-to-end multimodal logistics. From the moment your cargo is cleared at Indian ports (Tuticorin, Mangalore, Mundra, etc.), our bonded and commercial transport fleet delivers containers directly to your processing mills and warehouse doors across India.',
     imageUrl:
-      'https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1200&q=80',
-    iconName: 'MapPin',
+      'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792749867/afrodreamglobal/oxp9jcv4xlrye12eswfs.png',
+    iconName: 'Truck',
     category: 'Door-to-Door Delivery',
     displayOrder: 5,
     isPublished: true,
@@ -206,15 +206,16 @@ export const INITIAL_SETTINGS: SiteSettings = {
   heroSubheadline:
     'Comprehensive logistics and shipping solutions for Raw Cashew Nuts and global cargo. Reliable, efficient, and professional services across Africa and beyond.',
   heroBannerImageUrl:
-    'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=85',
-  heroMobileBannerImageUrl: '',
+    'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792683054/afrodreamglobal/qz5w6pmekttac4vuewhd.png',
+  heroMobileBannerImageUrl:
+    'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792683431/afrodreamglobal/bol41kvfxowfudwqdsda.png',
   showHeroTextOverlay: true,
   showHeroCtaButtons: true,
   aboutHeadline: 'ABOUT AFRO DREAM GLOBAL',
   aboutDescription:
     'AFRO DREAM GLOBAL (CAJU SWIFT SARL / CSS in Guinea-Bissau) is a logistics and shipping service provider based in West Africa. Since 2022, we have specialized in the containerized shipment of raw cashew nuts, establishing ourselves as a reliable partner in the shipping and logistics industry.',
   aboutImageUrl:
-    'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=85',
+    'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792682872/afrodreamglobal/afgudguzik42xzhqveoo.png',
 };
 
 export const INITIAL_QUOTES: QuoteRequest[] = [

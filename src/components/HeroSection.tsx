@@ -13,7 +13,7 @@ interface HeroSectionProps {
 }
 
 const DEFAULT_BANNER_IMAGE =
-  'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=85';
+  'https://res.cloudinary.com/h8ygrg0x/image/upload/v1792683054/afrodreamglobal/qz5w6pmekttac4vuewhd.png';
 
 export default function HeroSection({
   badge = 'RELIABLE SHIPPING SOLUTIONS',

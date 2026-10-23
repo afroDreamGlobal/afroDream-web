@@ -34,9 +34,15 @@ export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
     { label: 'Site Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/auth/logout', { method: 'POST' });
+    } catch {
+      // ignore
+    }
+    document.cookie = 'adg_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     document.cookie = 'adg_admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    router.push('/admin/login');
+    window.location.href = '/admin';
   };
 
   const isActive = (href: string) => {
@@ -48,7 +54,7 @@ export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
     <aside className="w-64 h-full bg-brand-dark text-white flex flex-col border-r border-brand-dark-border flex-shrink-0 select-none">
       {/* Brand Header */}
       <div className="p-6 border-b border-white/10 flex items-center justify-between">
-        <AfroDreamLogo variant="white" size="sm" withLink={false} />
+        <AfroDreamLogo variant="color" size="sm" withLink={false} />
       </div>
 
       <div className="px-6 py-2.5 border-b border-white/5 bg-[#171415]">
@@ -66,6 +72,7 @@ export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               onClick={onNavigate}
               className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
                 active

@@ -9,11 +9,10 @@ import {
   Ship,
   Clock,
   ArrowRight,
-  CheckCircle2,
-  AlertCircle,
   Eye,
+  Loader2,
 } from 'lucide-react';
-import { QuoteRequest, Service, TradeRoute, Shipment } from '@/lib/types';
+import { QuoteRequest } from '@/lib/types';
 
 export default function AdminOverviewPage() {
   const [quotes, setQuotes] = useState<QuoteRequest[]>([]);
@@ -23,19 +22,44 @@ export default function AdminOverviewPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // 1. Fetch Quotes
     fetch('/api/quotes')
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) {
+        if (data.success && Array.isArray(data.data)) {
           setQuotes(data.data);
         }
       })
+      .catch(() => {})
       .finally(() => setIsLoading(false));
 
+    // 2. Fetch Services Count
     fetch('/api/admin/services')
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setServicesCount(data.data.length);
+        if (data.success && Array.isArray(data.data)) {
+          setServicesCount(data.data.length);
+        }
+      })
+      .catch(() => {});
+
+    // 3. Fetch Trade Routes Count
+    fetch('/api/admin/routes')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data)) {
+          setRoutesCount(data.data.length);
+        }
+      })
+      .catch(() => {});
+
+    // 4. Fetch Shipments Count
+    fetch('/api/admin/tracking')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data)) {
+          setShipmentsCount(data.data.length);
+        }
       })
       .catch(() => {});
   }, []);
@@ -73,6 +97,7 @@ export default function AdminOverviewPage() {
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Total Enquiries */}
         <div className="bg-white rounded-2xl p-6 shadow-card border border-brand-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-brand-muted">
@@ -83,13 +108,16 @@ export default function AdminOverviewPage() {
             </div>
           </div>
           <div className="mt-4">
-            <div className="text-3xl font-bold font-sans text-brand-dark">{totalQuotes}</div>
+            <div className="text-3xl font-bold font-sans text-brand-dark">
+              {isLoading ? <Loader2 className="w-6 h-6 animate-spin text-brand-blue inline" /> : totalQuotes}
+            </div>
             <div className="text-xs text-brand-blue font-semibold mt-1">
               {newQuotes} new pending review
             </div>
           </div>
         </div>
 
+        {/* In Review */}
         <div className="bg-white rounded-2xl p-6 shadow-card border border-brand-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-brand-muted">
@@ -100,11 +128,14 @@ export default function AdminOverviewPage() {
             </div>
           </div>
           <div className="mt-4">
-            <div className="text-3xl font-bold font-sans text-brand-dark">{inProgressQuotes}</div>
+            <div className="text-3xl font-bold font-sans text-brand-dark">
+              {isLoading ? <Loader2 className="w-6 h-6 animate-spin text-amber-600 inline" /> : inProgressQuotes}
+            </div>
             <div className="text-xs text-amber-600 font-semibold mt-1">Commercial tariffs matching</div>
           </div>
         </div>
 
+        {/* Active Services */}
         <div className="bg-white rounded-2xl p-6 shadow-card border border-brand-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-brand-muted">
@@ -115,23 +146,28 @@ export default function AdminOverviewPage() {
             </div>
           </div>
           <div className="mt-4">
-            <div className="text-3xl font-bold font-sans text-brand-dark">{servicesCount || 5}</div>
+            <div className="text-3xl font-bold font-sans text-brand-dark">
+              {servicesCount || 5}
+            </div>
             <div className="text-xs text-emerald-600 font-semibold mt-1">Published on website</div>
           </div>
         </div>
 
+        {/* Monitored Corridors */}
         <div className="bg-white rounded-2xl p-6 shadow-card border border-brand-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-              Monitored Corridors
+              Trade Corridors
             </span>
             <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
               <Navigation className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-4">
-            <div className="text-3xl font-bold font-sans text-brand-dark">4</div>
-            <div className="text-xs text-purple-600 font-semibold mt-1">Tanzania & West Africa hubs</div>
+            <div className="text-3xl font-bold font-sans text-brand-dark">
+              {routesCount || 4}
+            </div>
+            <div className="text-xs text-purple-600 font-semibold mt-1">Active transit routes</div>
           </div>
         </div>
       </div>
@@ -167,39 +203,47 @@ export default function AdminOverviewPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-brand-border">
-              {quotes.slice(0, 5).map((quote) => (
-                <tr key={quote.id} className="hover:bg-gray-50/80 transition-colors">
-                  <td className="py-4 px-6 font-semibold text-brand-dark text-xs">
-                    {quote.referenceNumber}
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="font-semibold text-brand-dark text-xs">{quote.customerName}</div>
-                    <div className="text-[11px] text-brand-muted">{quote.companyName || quote.email}</div>
-                  </td>
-                  <td className="py-4 px-6 text-xs text-gray-700">{quote.serviceType}</td>
-                  <td className="py-4 px-6 text-xs text-gray-700">
-                    {quote.originPort} &rarr; {quote.destinationPort}
-                  </td>
-                  <td className="py-4 px-6">
-                    <span
-                      className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${getStatusColor(
-                        quote.status
-                      )}`}
-                    >
-                      {quote.status}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <Link
-                      href="/admin/quotes"
-                      className="text-xs font-semibold text-brand-blue hover:underline inline-flex items-center gap-1"
-                    >
-                      <span>Manage</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </Link>
+              {quotes.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-xs text-brand-muted">
+                    No freight inquiries received yet.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                quotes.slice(0, 5).map((quote) => (
+                  <tr key={quote.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="py-4 px-6 font-semibold text-brand-dark text-xs">
+                      {quote.referenceNumber}
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="font-semibold text-brand-dark text-xs">{quote.customerName}</div>
+                      <div className="text-[11px] text-brand-muted">{quote.companyName || quote.email}</div>
+                    </td>
+                    <td className="py-4 px-6 text-xs text-gray-700">{quote.serviceType}</td>
+                    <td className="py-4 px-6 text-xs text-gray-700">
+                      {quote.originPort} &rarr; {quote.destinationPort}
+                    </td>
+                    <td className="py-4 px-6">
+                      <span
+                        className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${getStatusColor(
+                          quote.status
+                        )}`}
+                      >
+                        {quote.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <Link
+                        href="/admin/quotes"
+                        className="text-xs font-semibold text-brand-blue hover:underline inline-flex items-center gap-1"
+                      >
+                        <span>Manage</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
