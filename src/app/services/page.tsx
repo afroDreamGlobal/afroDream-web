@@ -140,10 +140,10 @@ export default async function ServicesPage() {
 
               <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
                 <span className="text-xl sm:text-2xl font-bold text-white block leading-none">
-                  0 Demurrage
+                  No Demurrage
                 </span>
-                <span className="text-xs text-emerald-400 font-medium mt-1 block">
-                  21-Day Free Time Protocol
+                <span className="text-xs text-cyan-400 font-medium mt-1 block">
+                  Demurrage for the vessel or ship is not applicable.
                 </span>
               </div>
 

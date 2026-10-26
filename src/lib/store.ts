@@ -1,4 +1,4 @@
-import { Service, QuoteRequest, TradeRoute, Shipment, SiteSettings } from './types';
+import { Service, QuoteRequest, TradeRoute, Shipment, SiteSettings, TeamMember } from './types';
 
 // Default initial services from the client's reference images
 export const INITIAL_SERVICES: Service[] = [
@@ -137,16 +137,16 @@ export const INITIAL_TRADE_ROUTES: TradeRoute[] = [
   },
   {
     id: 'tr-2',
-    name: 'Tanzania to West India (Mundra)',
+    name: 'Tanzania to Vietnam',
     originRegion: 'East Africa',
     originCountry: 'Tanzania',
     originPort: 'Mtwara Port',
-    destinationRegion: 'South Asia',
-    destinationCountry: 'India',
-    destinationPort: 'Mundra Port',
-    transitTime: '16 - 20 Days',
-    frequency: 'Bi-weekly scheduled sailings',
-    cargoTypes: ['Raw Cashew Nuts', 'Pulses', 'Timber', 'Minerals'],
+    destinationRegion: 'Southeast Asia',
+    destinationCountry: 'Vietnam',
+    destinationPort: 'Ho Chi Minh City (HCMC) / Cat Lai (Cát Lái)',
+    transitTime: '18 - 22 Days',
+    frequency: 'Weekly scheduled sailings',
+    cargoTypes: ['Raw Cashew Nuts', 'Agricultural Commodities', 'Dry Bulk'],
     isActive: true,
     isFeatured: true,
   },
@@ -231,6 +231,7 @@ export const INITIAL_QUOTES: QuoteRequest[] = [
     destinationCountry: 'India',
     destinationPort: 'Tuticorin',
     serviceType: 'Container Shipment',
+    paymentTerms: 'Prepaid',
     cargoDescription: '500 MT Raw Cashew Nuts (In Shell)',
     cargoWeight: '500 MT',
     cargoVolume: '25 x 40ft High Cube Containers',
@@ -252,6 +253,7 @@ export const INITIAL_QUOTES: QuoteRequest[] = [
     destinationCountry: 'Vietnam',
     destinationPort: 'Ho Chi Minh',
     serviceType: 'Container Shipment',
+    paymentTerms: 'Collect',
     cargoDescription: '300 MT High Grade Raw Cashew Nuts',
     cargoWeight: '300 MT',
     cargoVolume: '15 x 40ft Containers',
@@ -272,6 +274,9 @@ export const INITIAL_QUOTES: QuoteRequest[] = [
     destinationCountry: 'India',
     destinationPort: 'Mangalore',
     serviceType: 'Local Transportation in India',
+    paymentTerms: 'Advance 50% / Final 50%',
+    advancePercentage: '50',
+    finalPercentage: '50',
     cargoDescription: 'Port clearing and trucking to Udupi cashew processing unit.',
     cargoWeight: '120 MT',
     preferredDate: '2026-11-05',
@@ -376,6 +381,8 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
   },
 ];
 
+export const INITIAL_TEAM_MEMBERS: TeamMember[] = [];
+
 // Global in-memory / persistent storage singleton for production & dev
 class DataStore {
   private services: Service[] = [...INITIAL_SERVICES];
@@ -383,6 +390,7 @@ class DataStore {
   private siteSettings: SiteSettings = { ...INITIAL_SETTINGS };
   private quotes: QuoteRequest[] = [...INITIAL_QUOTES];
   private shipments: Shipment[] = [...INITIAL_SHIPMENTS];
+  private teamMembers: TeamMember[] = [...INITIAL_TEAM_MEMBERS];
 
   // SERVICES
   getServices(): Service[] {
@@ -599,6 +607,60 @@ class DataStore {
   updateSettings(settings: Partial<SiteSettings>): SiteSettings {
     this.siteSettings = { ...this.siteSettings, ...settings };
     return { ...this.siteSettings };
+  }
+
+  // TEAM MEMBERS
+  getTeamMembers(): TeamMember[] {
+    return [...this.teamMembers].sort((a, b) => a.displayOrder - b.displayOrder);
+  }
+
+  getPublishedTeamMembers(): TeamMember[] {
+    return this.getTeamMembers().filter((m) => m.isPublished);
+  }
+
+  getTeamMemberById(id: string): TeamMember | undefined {
+    return this.teamMembers.find((m) => m.id === id);
+  }
+
+  saveTeamMember(data: Partial<TeamMember> & { name: string }): TeamMember {
+    if (data.id) {
+      const idx = this.teamMembers.findIndex((m) => m.id === data.id);
+      if (idx !== -1) {
+        const updated = {
+          ...this.teamMembers[idx],
+          ...data,
+          updatedAt: new Date().toISOString(),
+        } as TeamMember;
+        this.teamMembers[idx] = updated;
+        return updated;
+      }
+    }
+
+    const newMember: TeamMember = {
+      id: data.id || `team-${Date.now()}`,
+      name: data.name,
+      role: data.role || 'Team Member',
+      department: data.department || 'Operations',
+      bio: data.bio || '',
+      imageUrl: data.imageUrl || '/images/team/muhammed-shameem.jpg',
+      displayOrder: data.displayOrder ?? this.teamMembers.length + 1,
+      isPublished: data.isPublished ?? true,
+      email: data.email || '',
+      phone: data.phone || data.whatsapp || '',
+      whatsapp: data.whatsapp || data.phone || '',
+      linkedinUrl: data.linkedinUrl || '',
+      quote: data.quote || '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.teamMembers.push(newMember);
+    return newMember;
+  }
+
+  deleteTeamMember(id: string): boolean {
+    const initialLen = this.teamMembers.length;
+    this.teamMembers = this.teamMembers.filter((m) => m.id !== id);
+    return this.teamMembers.length < initialLen;
   }
 }
 

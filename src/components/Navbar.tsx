@@ -72,6 +72,7 @@ export default function Navbar({
     { label: 'Trade Routes', href: '/trade-routes' },
     { label: 'Track Cargo', href: '/tracking' },
     { label: 'About', href: '/about' },
+    { label: 'Team', href: '/team' },
     { label: 'Contact', href: '/contact' },
   ];
 

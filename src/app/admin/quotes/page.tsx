@@ -163,7 +163,14 @@ export default function AdminQuotesPage() {
                     <div className="font-bold text-brand-dark text-xs">{quote.customerName}</div>
                     <div className="text-[11px] text-brand-muted">{quote.companyName || quote.email}</div>
                   </td>
-                  <td className="py-4 px-6 text-xs text-gray-700 font-medium">{quote.serviceType}</td>
+                  <td className="py-4 px-6 text-xs text-gray-700 font-medium">
+                    <div>{quote.serviceType}</div>
+                    {quote.paymentTerms && (
+                      <span className="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-brand-blue border border-blue-200">
+                        Terms: {quote.paymentTerms}
+                      </span>
+                    )}
+                  </td>
                   <td className="py-4 px-6 text-xs text-gray-700">
                     {quote.originPort} &rarr; {quote.destinationPort}
                   </td>
@@ -266,7 +273,13 @@ export default function AdminQuotesPage() {
                   <span className="text-brand-muted block">Service Requested</span>
                   <span className="font-semibold text-brand-dark">{selectedQuote.serviceType}</span>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-blue-50/70 border border-blue-200/60 rounded-lg">
+                  <span className="text-brand-blue block font-semibold">Payment Terms</span>
+                  <span className="font-bold text-brand-dark text-sm">
+                    {selectedQuote.paymentTerms || 'Standard Terms'}
+                  </span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg col-span-2">
                   <span className="text-brand-muted block">Volume / Weight</span>
                   <span className="font-semibold text-brand-dark">
                     {selectedQuote.cargoWeight || 'N/A'} {selectedQuote.cargoVolume ? `(${selectedQuote.cargoVolume})` : ''}

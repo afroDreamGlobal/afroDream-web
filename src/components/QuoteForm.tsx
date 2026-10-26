@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { CheckCircle2, AlertCircle, Loader2, Send } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, Send, ChevronDown, Check } from 'lucide-react';
 
 const quoteSchema = z.object({
   customerName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -16,6 +16,9 @@ const quoteSchema = z.object({
   destinationCountry: z.string().min(2, 'Please specify destination country'),
   destinationPort: z.string().min(2, 'Please specify destination port'),
   serviceType: z.string().min(1, 'Please select a shipping service'),
+  paymentTerms: z.string().min(1, 'Please select or specify payment terms'),
+  advancePercentage: z.string().optional(),
+  finalPercentage: z.string().optional(),
   cargoDescription: z.string().min(3, 'Please describe your cargo (e.g. Raw Cashew Nuts)'),
   cargoWeight: z.string().optional(),
   cargoVolume: z.string().optional(),
@@ -30,15 +33,162 @@ interface QuoteFormProps {
   onSuccess?: () => void;
 }
 
+interface CustomSelectOption {
+  value: string;
+  label: string;
+}
+
+const SERVICE_OPTIONS: CustomSelectOption[] = [
+  { value: 'Container Shipment', label: 'Container Shipment' },
+  { value: 'Bulk Vessel Shipment', label: 'Bulk Vessel Shipment' },
+  { value: 'Local Transportation in Tanzania', label: 'Local Transportation in Tanzania (Truck)' },
+  { value: 'Clearing in the Port of Destination (POD)', label: 'Clearing at Port of Destination (Customs / POD)' },
+  { value: 'Local Transportation in India', label: 'Local Transportation in India (Truck)' },
+];
+
+const CONTAINER_PAYMENT_OPTIONS: CustomSelectOption[] = [
+  { value: 'Prepaid', label: 'Prepaid' },
+  { value: 'Collect', label: 'Collect' },
+];
+
+function CustomSelect({
+  label,
+  required,
+  value,
+  options,
+  onChange,
+  error,
+  placeholder = 'Select an option',
+}: {
+  label: string;
+  required?: boolean;
+  value: string;
+  options: CustomSelectOption[];
+  onChange: (val: string) => void;
+  error?: string;
+  placeholder?: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const selectedOption = options.find((opt) => opt.value === value);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="w-full relative" ref={containerRef}>
+      <label className="block text-xs font-semibold text-brand-dark mb-1">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+
+      {/* Trigger Button: perfectly fits input width and never overflows */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={`w-full text-left text-sm px-4 py-2.5 rounded-lg border bg-white flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue cursor-pointer ${
+          isOpen ? 'border-brand-blue ring-2 ring-brand-blue/20' : 'border-brand-border'
+        }`}
+      >
+        <span className="truncate pr-2 font-medium text-brand-dark">
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
+            isOpen ? 'rotate-180 text-brand-blue' : ''
+          }`}
+        />
+      </button>
+
+      {/* Mobile-Friendly Dropdown List: constrained strictly to 100% width, cannot overflow mobile screen */}
+      {isOpen && (
+        <div
+          role="listbox"
+          className="absolute z-50 left-0 right-0 w-full mt-1 bg-white rounded-xl shadow-2xl border border-brand-border overflow-hidden py-1 max-h-60 overflow-y-auto"
+        >
+          {options.map((option) => {
+            const isSelected = option.value === value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => {
+                  onChange(option.value);
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-4 py-2.5 sm:py-3 text-xs sm:text-sm transition-colors flex items-center justify-between cursor-pointer border-b border-gray-100 last:border-b-0 ${
+                  isSelected
+                    ? 'bg-brand-blue/10 text-brand-blue font-semibold'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-dark'
+                }`}
+              >
+                <span className="pr-2 leading-snug whitespace-normal break-words text-left">
+                  {option.label}
+                </span>
+                {isSelected && (
+                  <Check className="w-4 h-4 text-brand-blue flex-shrink-0 ml-2" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+    </div>
+  );
+}
+
+const isContainerService = (service: string) => {
+  const s = (service || '').toLowerCase();
+  return s.includes('container');
+};
+
+const isBulkService = (service: string) => {
+  const s = (service || '').toLowerCase();
+  return s.includes('bulk') || s.includes('vessel');
+};
+
+const isTruckService = (service: string) => {
+  const s = (service || '').toLowerCase();
+  return s.includes('truck') || s.includes('transportation') || s.includes('haulage');
+};
+
 export default function QuoteForm({ defaultService = 'Container Shipment' }: QuoteFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  const initialIsContainer = isContainerService(defaultService);
+  const initialIsBulk = isBulkService(defaultService);
+  const initialPaymentTerms = initialIsContainer
+    ? 'Prepaid'
+    : initialIsBulk
+    ? 'Advance 30% / Final 70%'
+    : 'Advance 50% / Final 50%';
+
   const {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<QuoteFormData>({
     resolver: zodResolver(quoteSchema),
@@ -48,8 +198,67 @@ export default function QuoteForm({ defaultService = 'Container Shipment' }: Quo
       originPort: 'Mtwara Port',
       destinationCountry: 'India',
       destinationPort: 'Tuticorin',
+      paymentTerms: initialPaymentTerms,
+      advancePercentage: initialIsContainer ? '' : initialIsBulk ? '30' : '50',
+      finalPercentage: initialIsContainer ? '' : initialIsBulk ? '70' : '50',
     },
   });
+
+  const selectedService = watch('serviceType') || defaultService;
+  const currentPaymentTerms = watch('paymentTerms');
+  const advancePercentage = watch('advancePercentage');
+  const finalPercentage = watch('finalPercentage');
+
+  // Dynamically update payment terms defaults when service type switches
+  useEffect(() => {
+    const isContainer = isContainerService(selectedService);
+    const isBulk = isBulkService(selectedService);
+    const isTruck = isTruckService(selectedService);
+    const currentTerms = getValues('paymentTerms');
+
+    if (isContainer) {
+      if (currentTerms !== 'Prepaid' && currentTerms !== 'Collect') {
+        setValue('paymentTerms', 'Prepaid', { shouldValidate: true });
+        setValue('advancePercentage', '');
+        setValue('finalPercentage', '');
+      }
+    } else if (isBulk) {
+      if (currentTerms === 'Prepaid' || currentTerms === 'Collect' || !currentTerms) {
+        setValue('advancePercentage', '30');
+        setValue('finalPercentage', '70');
+        setValue('paymentTerms', 'Advance 30% / Final 70%', { shouldValidate: true });
+      }
+    } else if (isTruck) {
+      if (currentTerms === 'Prepaid' || currentTerms === 'Collect' || !currentTerms) {
+        setValue('advancePercentage', '50');
+        setValue('finalPercentage', '50');
+        setValue('paymentTerms', 'Advance 50% / Final 50%', { shouldValidate: true });
+      }
+    } else {
+      if (currentTerms === 'Prepaid' || currentTerms === 'Collect' || !currentTerms) {
+        setValue('advancePercentage', '50');
+        setValue('finalPercentage', '50');
+        setValue('paymentTerms', 'Advance 50% / Final 50%', { shouldValidate: true });
+      }
+    }
+  }, [selectedService, setValue, getValues]);
+
+  const handleAdvanceChange = (val: string) => {
+    const num = parseInt(val, 10);
+    setValue('advancePercentage', val);
+    if (!isNaN(num) && num >= 0 && num <= 100) {
+      const remaining = 100 - num;
+      setValue('finalPercentage', String(remaining));
+      setValue('paymentTerms', `Advance ${num}% / Final ${remaining}%`, { shouldValidate: true });
+    } else {
+      setValue('paymentTerms', `Advance ${val || 0}% / Final ${finalPercentage || 0}%`, { shouldValidate: true });
+    }
+  };
+
+  const handleFinalChange = (val: string) => {
+    setValue('finalPercentage', val);
+    setValue('paymentTerms', `Advance ${advancePercentage || 0}% / Final ${val || 0}%`, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: QuoteFormData) => {
     setIsSubmitting(true);
@@ -70,9 +279,27 @@ export default function QuoteForm({ defaultService = 'Container Shipment' }: Quo
       }
 
       setSubmitSuccess(
-        `Thank you! Your quote request has been registered with reference ${result.data.referenceNumber}. Our commercial team will review your specifications and contact you shortly.`
+        `Thank you! Your quote request has been registered with reference ${result.data.referenceNumber}. Our commercial team will review your cargo and payment terms (${data.paymentTerms}) and contact you shortly.`
       );
-      reset();
+      reset({
+        serviceType: defaultService,
+        originCountry: 'Tanzania',
+        originPort: 'Mtwara Port',
+        destinationCountry: 'India',
+        destinationPort: 'Tuticorin',
+        paymentTerms: isContainerService(defaultService) ? 'Prepaid' : 'Advance 30% / Final 70%',
+        advancePercentage: isContainerService(defaultService) ? '' : '30',
+        finalPercentage: isContainerService(defaultService) ? '' : '70',
+        customerName: '',
+        companyName: '',
+        email: '',
+        phone: '',
+        cargoDescription: '',
+        cargoWeight: '',
+        cargoVolume: '',
+        preferredDate: '',
+        additionalNotes: '',
+      });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'An unexpected error occurred';
       setSubmitError(message);
@@ -180,23 +407,72 @@ export default function QuoteForm({ defaultService = 'Container Shipment' }: Quo
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="sm:col-span-2 lg:col-span-3">
-                <label className="block text-xs font-semibold text-brand-dark mb-1">
-                  Requested Service <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('serviceType')}
-                  className="w-full text-sm px-4 py-2.5 rounded-lg border border-brand-border bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue"
-                >
-                  <option value="Container Shipment">Container Shipment (Ocean Freight)</option>
-                  <option value="Bulk Vessel Shipment">Bulk Vessel Shipment (Charter / Breakbulk)</option>
-                  <option value="Local Transportation in Tanzania">Local Transportation in Tanzania (Inland Haulage)</option>
-                  <option value="Clearing in the Port of Destination (POD)">Clearing at Port of Destination (Customs / POD)</option>
-                  <option value="Local Transportation in India">Local Transportation in India (Port to Factory)</option>
-                </select>
-                {errors.serviceType && (
-                  <p className="text-xs text-red-500 mt-1">{errors.serviceType.message}</p>
-                )}
+                <CustomSelect
+                  label="Requested Service"
+                  required
+                  value={selectedService}
+                  options={SERVICE_OPTIONS}
+                  onChange={(val) => {
+                    setValue('serviceType', val, { shouldValidate: true });
+                  }}
+                  error={errors.serviceType?.message}
+                />
+                <input type="hidden" {...register('serviceType')} />
               </div>
+
+              {/* Simple Payment Terms: Container = Prepaid / Collect; Bulk & Truck = Advance % / Final Payment % */}
+              {isContainerService(selectedService) ? (
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <CustomSelect
+                    label="Payment Terms"
+                    required
+                    value={currentPaymentTerms || 'Prepaid'}
+                    options={CONTAINER_PAYMENT_OPTIONS}
+                    onChange={(val) => {
+                      setValue('paymentTerms', val, { shouldValidate: true });
+                      setValue('advancePercentage', '');
+                      setValue('finalPercentage', '');
+                    }}
+                    error={errors.paymentTerms?.message}
+                  />
+                  <input type="hidden" {...register('paymentTerms')} />
+                </div>
+              ) : (
+                <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-brand-dark mb-1">
+                      Advance % <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={advancePercentage || ''}
+                      onChange={(e) => handleAdvanceChange(e.target.value)}
+                      placeholder="e.g. 30"
+                      className="w-full text-sm px-4 py-2.5 rounded-lg border border-brand-border bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-brand-dark mb-1">
+                      Final Payment % <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={finalPercentage || ''}
+                      onChange={(e) => handleFinalChange(e.target.value)}
+                      placeholder="e.g. 70"
+                      className="w-full text-sm px-4 py-2.5 rounded-lg border border-brand-border bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue"
+                    />
+                  </div>
+                  {errors.paymentTerms && (
+                    <p className="text-xs text-red-500 mt-1 sm:col-span-2">{errors.paymentTerms.message}</p>
+                  )}
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-semibold text-brand-dark mb-1">

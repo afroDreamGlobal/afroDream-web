@@ -61,6 +61,7 @@ export async function sendQuoteAcknowledgementEmail(quote: QuoteRequest): Promis
                 <td class="label">Requested Service</td>
                 <td class="value">${quote.serviceType}</td>
               </tr>
+              ${quote.paymentTerms ? `<tr><td class="label">Payment Terms</td><td class="value" style="color: #2B7CC0; font-weight: bold;">${quote.paymentTerms}</td></tr>` : ''}
               <tr>
                 <td class="label">Origin Port</td>
                 <td class="value">${quote.originPort}, ${quote.originCountry}</td>
