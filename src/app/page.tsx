@@ -5,10 +5,12 @@ import ServiceHighlightsBar from '@/components/ServiceHighlightsBar';
 import AboutSection from '@/components/AboutSection';
 import ServicesSection from '@/components/ServicesSection';
 import TradeRoutesSection from '@/components/TradeRoutesSection';
+import TeamSection from '@/components/TeamSection';
 import QuoteForm from '@/components/QuoteForm';
 import Footer from '@/components/Footer';
 import { store } from '@/lib/store';
 import { getLivePublishedServices } from '@/lib/services';
+import { getLivePublishedTeamMembers } from '@/lib/team';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { SiteSettings } from '@/lib/types';
 import Link from 'next/link';
@@ -71,6 +73,7 @@ async function getLiveRoutes() {
 export default async function HomePage() {
   const services = await getLivePublishedServices();
   const tradeRoutes = await getLiveRoutes();
+  const teamMembers = await getLivePublishedTeamMembers();
   const settings = await getLiveSettings();
 
   return (
@@ -108,6 +111,9 @@ export default async function HomePage() {
 
         {/* Trade Routes & Global Destinations */}
         <TradeRoutesSection routes={tradeRoutes} />
+
+        {/* Team Leadership Section (Exact match with reference design) */}
+        <TeamSection teamMembers={teamMembers} />
 
         {/* Request a Quote Section */}
         <section id="quote-section" className="py-20 lg:py-28 bg-white relative">

@@ -14,6 +14,9 @@ const quoteRequestSchema = z.object({
   destinationCountry: z.string().min(2),
   destinationPort: z.string().min(2),
   serviceType: z.string().min(1),
+  paymentTerms: z.string().optional(),
+  advancePercentage: z.string().optional(),
+  finalPercentage: z.string().optional(),
   cargoDescription: z.string().min(3),
   cargoWeight: z.string().optional(),
   cargoVolume: z.string().optional(),
@@ -32,7 +35,10 @@ export async function POST(request: Request) {
     // If Supabase is configured, also persist directly to PostgreSQL
     if (isSupabaseConfigured && supabaseAdmin) {
       try {
-        await supabaseAdmin.from('quote_requests').insert({
+        const paymentNotes = quote.paymentTerms ? `[Payment Terms: ${quote.paymentTerms}]` : '';
+        const combinedNotes = [quote.additionalNotes, paymentNotes].filter(Boolean).join('\n');
+
+        const baseRecord = {
           reference_number: quote.referenceNumber,
           customer_name: quote.customerName,
           company_name: quote.companyName || null,
@@ -47,9 +53,20 @@ export async function POST(request: Request) {
           cargo_weight: quote.cargoWeight || null,
           cargo_volume: quote.cargoVolume || null,
           preferred_date: quote.preferredDate || null,
-          additional_notes: quote.additionalNotes || null,
+          additional_notes: combinedNotes || null,
           status: 'new',
+        };
+
+        // Try inserting with payment_terms column if present in table
+        const { error: insertErr } = await supabaseAdmin.from('quote_requests').insert({
+          ...baseRecord,
+          payment_terms: quote.paymentTerms || null,
         });
+
+        if (insertErr) {
+          // Fallback if payment_terms column does not exist yet in remote Supabase
+          await supabaseAdmin.from('quote_requests').insert(baseRecord);
+        }
       } catch (dbErr) {
         console.error('[Database Insert Error]', dbErr);
       }
@@ -79,6 +96,10 @@ export async function POST(request: Request) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapSupabaseToQuote(row: any) {
+  // Extract payment terms if stored in additional_notes or payment_terms column
+  const notesMatch = row.additional_notes?.match(/\[Payment Terms:\s*([^\]]+)\]/);
+  const paymentTerms = row.payment_terms || (notesMatch ? notesMatch[1] : undefined);
+
   return {
     id: row.id,
     referenceNumber: row.reference_number,
@@ -91,6 +112,7 @@ function mapSupabaseToQuote(row: any) {
     destinationCountry: row.destination_country,
     destinationPort: row.destination_port,
     serviceType: row.service_type,
+    paymentTerms,
     cargoDescription: row.cargo_description,
     cargoWeight: row.cargo_weight || undefined,
     cargoVolume: row.cargo_volume || undefined,

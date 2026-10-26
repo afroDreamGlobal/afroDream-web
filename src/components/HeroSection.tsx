@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronRight } from 'lucide-react';
 
 interface HeroSectionProps {
   badge?: string;
@@ -37,7 +36,7 @@ export default function HeroSection({
     );
 
   return (
-    <section className="relative min-h-[460px] sm:min-h-[560px] lg:min-h-[660px] flex items-center bg-brand-dark overflow-hidden">
+    <section className="relative min-h-[480px] sm:min-h-[560px] lg:min-h-[660px] flex items-stretch sm:items-center bg-brand-dark overflow-hidden">
       {/* Background Banner Image - Desktop (sm and up) */}
       <div
         className="hidden sm:block absolute inset-0 bg-cover bg-center lg:bg-[center_top] transition-all duration-700 ease-out"
@@ -71,57 +70,53 @@ export default function HeroSection({
       </div>
 
       {/* Main Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-5 sm:py-20 lg:py-28 w-full flex-1 flex flex-col justify-between sm:block">
         {hasTextContent ? (
-          <div className="max-w-2xl lg:max-w-3xl">
-            {/* Optional Badge */}
-            {badge && badge.trim().length > 0 && (
-              <div className="inline-flex items-center gap-2 mb-4">
-                <span className="text-cyan-300 sm:text-brand-blue tracking-[0.25em] uppercase font-bold text-xs sm:text-sm drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] font-sans flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                  <span>{badge.replace('SOLUTIONS', '').trim()}</span>
-                  {badge.toUpperCase().includes('SOLUTIONS') && (
-                    <span className="text-cyan-400">SOLUTIONS</span>
-                  )}
-                </span>
-              </div>
-            )}
+          <div className="max-w-2xl lg:max-w-3xl flex-1 flex flex-col justify-between sm:block">
+            <div>
+              {/* Optional Badge */}
+              {badge && badge.trim().length > 0 && (
+                <div className="inline-flex items-center gap-2 mb-3 sm:mb-4">
+                  <span className="text-cyan-300 sm:text-brand-blue tracking-[0.25em] uppercase font-bold text-xs sm:text-sm drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] font-sans flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                    <span>{badge.replace('SOLUTIONS', '').trim()}</span>
+                    {badge.toUpperCase().includes('SOLUTIONS') && (
+                      <span className="text-cyan-400">SOLUTIONS</span>
+                    )}
+                  </span>
+                </div>
+              )}
 
-            {/* Optional Large Hero Heading in Bebas Neue */}
-            {headline && headline.trim().length > 0 && (
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-heading font-normal uppercase text-white leading-[0.92] tracking-tight drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)] mb-6">
-                {headline}
-              </h1>
-            )}
+              {/* Optional Large Hero Heading in Bebas Neue */}
+              {headline && headline.trim().length > 0 && (
+                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-heading font-normal uppercase text-white leading-[0.92] tracking-tight drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)] mb-4 sm:mb-6">
+                  {headline}
+                </h1>
+              )}
 
-            {/* Optional Supporting Subheadline in Poppins */}
-            {subheadline && subheadline.trim().length > 0 && (
-              <p className="text-base sm:text-lg text-white sm:text-gray-200/95 font-medium sm:font-light leading-relaxed max-w-xl mb-9 font-sans drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                {subheadline}
-              </p>
-            )}
+              {/* Optional Supporting Subheadline in Poppins */}
+              {subheadline && subheadline.trim().length > 0 && (
+                <p className="text-base sm:text-lg text-white sm:text-gray-200/95 font-medium sm:font-light leading-relaxed max-w-xl mb-4 sm:mb-9 font-sans drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                  {subheadline}
+                </p>
+              )}
+            </div>
 
             {/* Call to Action Buttons */}
             {showCtaButtons && (
-              <div className="flex flex-row items-center gap-2.5 sm:gap-3.5 pt-1 w-full max-w-sm sm:max-w-none">
+              <div className="flex flex-row items-center gap-2.5 sm:gap-3.5 pt-4 sm:pt-1 w-full max-w-sm sm:max-w-none mt-auto sm:mt-0">
                 <Link
                   href="/quote"
-                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-7 rounded-xl bg-gradient-to-r from-brand-blue to-[#1E67A2] hover:from-brand-blue-hover hover:to-brand-blue text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-brand-blue/35 border border-white/20 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
+                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-7 rounded-xl bg-gradient-to-r from-brand-blue to-[#1E67A2] hover:from-brand-blue-hover hover:to-brand-blue text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-brand-blue/35 border border-white/20 flex items-center justify-center transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
                 >
                   <span>Request a Quote</span>
-                  <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <ArrowRight className="w-3 h-3 text-white" />
-                  </span>
                 </Link>
 
                 <Link
                   href="/services"
-                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-7 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs sm:text-sm tracking-wide border border-white/30 shadow-md flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
+                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-7 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs sm:text-sm tracking-wide border border-white/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
                 >
                   <span>Our Services</span>
-                  <span className="w-5 h-5 rounded-full bg-white/10 border border-white/15 flex items-center justify-center flex-shrink-0">
-                    <ChevronRight className="w-3 h-3 text-white" />
-                  </span>
                 </Link>
               </div>
             )}
@@ -133,21 +128,15 @@ export default function HeroSection({
               <div className="flex flex-row items-center gap-2.5 sm:gap-3.5 bg-brand-dark/80 backdrop-blur-md p-2.5 sm:p-4 rounded-2xl border border-white/15 w-full sm:w-fit shadow-2xl mt-auto max-w-sm sm:max-w-none">
                 <Link
                   href="/quote"
-                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-6 rounded-xl bg-gradient-to-r from-brand-blue to-[#1E67A2] hover:from-brand-blue-hover hover:to-brand-blue text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-brand-blue/35 border border-white/20 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
+                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-6 rounded-xl bg-gradient-to-r from-brand-blue to-[#1E67A2] hover:from-brand-blue-hover hover:to-brand-blue text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-brand-blue/35 border border-white/20 flex items-center justify-center transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
                 >
                   <span>Request a Quote</span>
-                  <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <ArrowRight className="w-3 h-3 text-white" />
-                  </span>
                 </Link>
                 <Link
                   href="/services"
-                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-6 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs sm:text-sm tracking-wide border border-white/30 shadow-md flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
+                  className="flex-1 sm:flex-initial h-11 sm:h-12 px-3.5 sm:px-6 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-xs sm:text-sm tracking-wide border border-white/30 shadow-md flex items-center justify-center transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
                 >
                   <span>Our Services</span>
-                  <span className="w-5 h-5 rounded-full bg-white/10 border border-white/15 flex items-center justify-center flex-shrink-0">
-                    <ChevronRight className="w-3 h-3 text-white" />
-                  </span>
                 </Link>
               </div>
             )}

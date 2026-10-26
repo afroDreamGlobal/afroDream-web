@@ -31,6 +31,9 @@ export interface QuoteRequest {
   destinationCountry: string;
   destinationPort: string;
   serviceType: string;
+  paymentTerms?: string;
+  advancePercentage?: string;
+  finalPercentage?: string;
   cargoDescription: string;
   cargoWeight?: string;
   cargoVolume?: string;
@@ -127,3 +130,22 @@ export interface SiteSettings {
   aboutImageUrl?: string;
   addressTanzaniaOffice?: string;
 }
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  department?: string;
+  bio?: string;
+  imageUrl: string;
+  displayOrder: number;
+  isPublished: boolean;
+  email?: string;
+  phone?: string;
+  whatsapp?: string;
+  linkedinUrl?: string;
+  quote?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+

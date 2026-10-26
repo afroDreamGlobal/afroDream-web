@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Eye,
   Loader2,
+  Users,
 } from 'lucide-react';
 import { QuoteRequest } from '@/lib/types';
 
@@ -19,6 +20,7 @@ export default function AdminOverviewPage() {
   const [servicesCount, setServicesCount] = useState(0);
   const [routesCount, setRoutesCount] = useState(0);
   const [shipmentsCount, setShipmentsCount] = useState(0);
+  const [teamCount, setTeamCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -62,6 +64,16 @@ export default function AdminOverviewPage() {
         }
       })
       .catch(() => {});
+
+    // 5. Fetch Team Members Count
+    fetch('/api/admin/team')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data)) {
+          setTeamCount(data.data.length);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const totalQuotes = quotes.length;
@@ -96,7 +108,7 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Total Enquiries */}
         <div className="bg-white rounded-2xl p-6 shadow-card border border-brand-border">
           <div className="flex items-center justify-between">
@@ -170,6 +182,30 @@ export default function AdminOverviewPage() {
             <div className="text-xs text-purple-600 font-semibold mt-1">Active transit routes</div>
           </div>
         </div>
+
+        {/* Team Members Card */}
+        <Link
+          href="/admin/team"
+          className="bg-white rounded-2xl p-6 shadow-card border border-brand-border hover:border-amber-400 hover:shadow-lg transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-muted group-hover:text-amber-600 transition-colors">
+              Team Members
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
+              <Users className="w-5 h-5" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <div className="text-3xl font-bold font-sans text-brand-dark">
+              {teamCount || 5}
+            </div>
+            <div className="text-xs text-amber-600 font-semibold mt-1 flex items-center gap-1">
+              <span>Manage personnel</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* Recent Quote Enquiries */}

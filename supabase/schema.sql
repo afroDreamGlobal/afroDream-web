@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS public.quote_requests (
   destination_country TEXT NOT NULL,
   destination_port TEXT NOT NULL,
   service_type TEXT NOT NULL,
+  payment_terms TEXT,
   cargo_description TEXT NOT NULL,
   cargo_weight TEXT,
   cargo_volume TEXT,
@@ -327,16 +328,16 @@ VALUES
   true
 ),
 (
-  'Tanzania to West India (Mundra)',
+  'Tanzania to Vietnam',
   'East Africa',
   'Tanzania',
   'Mtwara Port',
-  'South Asia',
-  'India',
-  'Mundra Port',
-  '16 - 20 Days',
-  'Bi-weekly scheduled sailings',
-  '["Raw Cashew Nuts", "Pulses", "Timber", "Minerals"]'::jsonb,
+  'Southeast Asia',
+  'Vietnam',
+  'Ho Chi Minh City (HCMC) / Cat Lai (Cát Lái)',
+  '18 - 22 Days',
+  'Weekly scheduled sailings',
+  '["Raw Cashew Nuts", "Agricultural Commodities", "Dry Bulk"]'::jsonb,
   true,
   true
 ),
@@ -480,3 +481,43 @@ VALUES
   NULL
 )
 ON CONFLICT (reference_number) DO NOTHING;
+
+-- ---------------------------------------------------------------------
+-- 7. TEAM MEMBERS (Corporate Leadership & Operations Personnel)
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.team_members (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  department TEXT,
+  bio TEXT,
+  image_url TEXT NOT NULL,
+  display_order INT DEFAULT 0,
+  is_published BOOLEAN DEFAULT true,
+  email TEXT,
+  phone TEXT,
+  linkedin_url TEXT,
+  quote TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_members_display_order ON public.team_members(display_order);
+CREATE INDEX IF NOT EXISTS idx_team_members_is_published ON public.team_members(is_published);
+
+ALTER TABLE public.team_members ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public can view published team members" ON public.team_members;
+CREATE POLICY "Public can view published team members" 
+  ON public.team_members 
+  FOR SELECT 
+  USING (is_published = true);
+
+DROP POLICY IF EXISTS "Service role full access on team_members" ON public.team_members;
+CREATE POLICY "Service role full access on team_members" 
+  ON public.team_members 
+  FOR ALL 
+  TO service_role 
+  USING (true) 
+  WITH CHECK (true);
+

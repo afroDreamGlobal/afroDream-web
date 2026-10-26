@@ -13,7 +13,7 @@ export const revalidate = 0;
 export const metadata = {
   title: 'Trade Routes & Port Corridors — Afro Dream Global',
   description:
-    'Direct maritime trade corridors connecting Mtwara Port (Tanzania) and Bissau (Guinea-Bissau) with Tuticorin, Mangalore, Mundra, and Ho Chi Minh.',
+    'Direct maritime trade corridors connecting Mtwara Port (Tanzania) and Bissau (Guinea-Bissau) with Tuticorin, Mangalore, Ho Chi Minh City (Cat Lai), and international markets.',
 };
 
 async function getLiveRoutes(): Promise<TradeRoute[]> {

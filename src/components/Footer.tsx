@@ -123,7 +123,11 @@ export default function Footer({ settings }: FooterProps = {}) {
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
-                  <span>Afro Dream Global (Mtwara, Tanzania)</span>
+                  <span>Afro Dream Global (Guinea-Bissau - Tanzania)</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span>BREDAS Traders (Tanzania - Mtwara)</span>
                 </div>
               </div>
             </div>
@@ -333,9 +337,17 @@ export default function Footer({ settings }: FooterProps = {}) {
               Privacy Policy
             </Link>
             <span className="text-slate-700 hidden sm:inline">•</span>
-            <Link href="/about" className="hover:text-white transition-colors">
-              Terms & Conditions
-            </Link>
+            <span className="text-slate-400">
+              Crafted by{' '}
+              <a
+                href="https://www.ekodrix.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-300 hover:text-cyan-400 transition-colors font-medium"
+              >
+                Ekodrix
+              </a>
+            </span>
           </div>
         </div>
       </div>

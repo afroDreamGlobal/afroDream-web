@@ -42,10 +42,10 @@ const REGION_DATA: Record<
     description:
       'Scheduled containerized freight connecting Mtwara Port to southern and northern manufacturing hubs across Vietnam.',
     ports: [
-      { name: 'Ho Chi Minh', state: 'Southern Vietnam', transit: '18-22 Days', coords: { x: 635, y: 215 } },
+      { name: 'Ho Chi Minh City (HCMC)', state: 'Southern Vietnam', transit: '18-22 Days', coords: { x: 635, y: 215 } },
+      { name: 'Cat Lai (Cát Lái)', state: 'HCMC Port Cluster', transit: '18-22 Days', coords: { x: 638, y: 218 } },
       { name: 'Hai Phong', state: 'Northern Vietnam', transit: '22-25 Days', coords: { x: 640, y: 175 } },
       { name: 'Da Nang', state: 'Central Vietnam', transit: '20-23 Days', coords: { x: 638, y: 195 } },
-      { name: 'Quy Nhon', state: 'Binh Dinh Province', transit: '19-22 Days', coords: { x: 645, y: 205 } },
     ],
   },
   GLOBAL: {
