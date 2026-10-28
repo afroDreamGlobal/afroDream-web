@@ -121,19 +121,19 @@ export default async function HomePage() {
         {/* Request a Quote Section (Freight Inquiries) */}
         <section
           id="quote-section"
-          className="py-16 sm:py-24 lg:py-28 bg-gradient-to-b from-[#F5F8FC] via-[#EEF4FB] to-[#E8F0F9] relative overflow-hidden border-t border-slate-200/80"
+          className="py-16 sm:py-24 lg:py-28 bg-gradient-to-b from-[#F5F8FC] via-[#EEF4FB] to-[#E8F0F9] relative border-t border-slate-200/80"
         >
-          {/* Subtle Ambient Glows */}
-          <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand-blue/10 rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-cyan-400/10 rounded-full blur-[120px] pointer-events-none" />
-
-          {/* Subtle Nautical Dot Matrix */}
-          <div className="absolute inset-0 bg-[radial-gradient(#2B7CC0_1px,transparent_1px)] [background-size:28px_28px] opacity-10 pointer-events-none" />
+          {/* Subtle Ambient Glows - safely contained */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand-blue/10 rounded-full blur-[140px]" />
+            <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-cyan-400/10 rounded-full blur-[120px]" />
+            <div className="absolute inset-0 bg-[radial-gradient(#2B7CC0_1px,transparent_1px)] [background-size:28px_28px] opacity-10" />
+          </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-              {/* Left Column: Heading, Value Cards, WhatsApp Desk */}
-              <div className="lg:col-span-5 space-y-6">
+              {/* Left Column: Heading, Value Cards (Sticky alongside form on desktop) */}
+              <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28 lg:self-start">
                 <div>
                   <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-3 shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
