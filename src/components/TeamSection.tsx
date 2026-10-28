@@ -126,37 +126,28 @@ export default function TeamSection({
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-brand-blue" />
             </Link>
 
-            {/* Desktop Navigation Arrows (Visible when >4 members) */}
-            {publishedMembers.length > 4 && (
-              <div className="hidden md:flex items-center space-x-2 pl-2 border-l border-white/10">
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  disabled={currentIndex === 0}
-                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all shadow-sm"
-                  aria-label="Previous Slide"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={currentIndex >= publishedMembers.length - 1}
-                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all shadow-sm"
-                  aria-label="Next Slide"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
         {/* ========================================================================= */}
         {/* UNIFIED TEAM CARDS CONTAINER: Smooth Horizontal Scroll & Touch Swipe      */}
         {/* ========================================================================= */}
-        <div
-          ref={scrollContainerRef}
+        <div className="relative group/carousel">
+          {/* Left Side Scroll Button */}
+          {publishedMembers.length > 4 && (
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={currentIndex === 0}
+              className="hidden md:flex absolute -left-3 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/95 hover:bg-brand-blue border border-white/20 hover:border-brand-blue text-white shadow-2xl items-center justify-center transition-all duration-300 disabled:opacity-0 disabled:pointer-events-none hover:scale-110 active:scale-95"
+              aria-label="Scroll Left"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          )}
+
+          <div
+            ref={scrollContainerRef}
           onScroll={handleScroll}
           className={`flex gap-3.5 sm:gap-4 lg:gap-5 overflow-x-auto pb-4 pt-1 scroll-smooth snap-x snap-mandatory scrollbar-none items-stretch ${
             shouldCenter ? 'sm:justify-center' : 'sm:justify-start'
@@ -228,6 +219,19 @@ export default function TeamSection({
               </div>
             </div>
           ))}
+        </div>
+          {/* Right Side Scroll Button */}
+          {publishedMembers.length > 4 && (
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={currentIndex >= publishedMembers.length - 1}
+              className="hidden md:flex absolute -right-3 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/95 hover:bg-brand-blue border border-white/20 hover:border-brand-blue text-white shadow-2xl items-center justify-center transition-all duration-300 disabled:opacity-0 disabled:pointer-events-none hover:scale-110 active:scale-95"
+              aria-label="Scroll Right"
+            >
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          )}
         </div>
 
         {/* ========================================================================= */}
