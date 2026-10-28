@@ -13,7 +13,7 @@ import {
   Settings,
   LogOut,
   ExternalLink,
-  Sparkles,
+  LayoutTemplate,
   Users,
 } from 'lucide-react';
 
@@ -27,7 +27,7 @@ export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
 
   const navItems = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard },
-    { label: 'Hero Banner', href: '/admin/hero', icon: Sparkles },
+    { label: 'Hero Banner', href: '/admin/hero', icon: LayoutTemplate },
     { label: 'Team Members', href: '/admin/team', icon: Users },
     { label: 'Quote Enquiries', href: '/admin/quotes', icon: FileText },
     { label: 'Services', href: '/admin/services', icon: Box },

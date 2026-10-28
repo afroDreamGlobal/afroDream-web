@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { SiteSettings } from '@/lib/types';
 import { INITIAL_SETTINGS } from '@/lib/store';
 import {
-  Sparkles,
+  Layers,
   Image as ImageIcon,
   Upload,
   Save,
@@ -13,8 +13,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Eye,
-  Layers,
-  Link2,
+    Link2,
   ExternalLink,
   Smartphone,
   Monitor,
@@ -360,7 +359,7 @@ export default function AdminHeroPage() {
                 showOverlay ? 'bg-brand-blue text-white shadow-xs' : 'bg-slate-100 text-slate-500'
               }`}
             >
-              <Sparkles className="w-5 h-5" />
+              <Layers className="w-5 h-5" />
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -700,7 +699,7 @@ export default function AdminHeroPage() {
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5 animate-fadeIn">
           <div>
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-brand-blue" />
+              <Layers className="w-4 h-4 text-brand-blue" />
               <span>Step 3: Text &amp; Call-To-Action Overlay Content</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">

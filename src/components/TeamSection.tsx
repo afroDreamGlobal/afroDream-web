@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -12,6 +12,7 @@ import {
   Mail,
   Phone,
   Quote,
+  User,
 } from 'lucide-react';
 import { TeamMember } from '@/lib/types';
 
@@ -26,7 +27,7 @@ interface TeamSectionProps {
 
 export default function TeamSection({
   teamMembers = [],
-  subHeadline = 'LEADERSHIP & EXPERTISE',
+  subHeadline = 'LEADERSHIP & OPERATIONS',
   headline = 'Our people are our company.',
   subtitle = 'Expertise becomes meaningful when it is shared.',
   ctaText = 'MEET OUR TEAM',
@@ -86,7 +87,7 @@ export default function TeamSection({
 
   return (
     <section className="py-10 sm:py-16 bg-[#0B1522] text-white relative overflow-hidden border-t border-white/5">
-      {/* Subtle background logistics grid pattern matching ServicesSection */}
+      {/* Subtle background logistics grid pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#2B7CC0_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
 
       {/* Subtle ambient light */}
@@ -94,30 +95,29 @@ export default function TeamSection({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ========================================================================= */}
-        {/* SECTION HEADER: Reduced font size & Single-Line Arrangement                */}
+        {/* SECTION HEADER: Single-Line Arrangement + Desktop Carousel Navigation     */}
         {/* ========================================================================= */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-8 pb-4 border-b border-white/10">
-          {/* Left Title Block: Sub-headline / Eyebrow + Headline on a single line */}
+          {/* Left Title Block: Sub-headline / Eyebrow + Headline */}
           <div className="space-y-1.5 flex-shrink-0">
             {subHeadline && (
               <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-brand-blue block font-sans">
                 {subHeadline}
               </span>
             )}
-            {/* Reduced font size so "Our people are our company." stays on ONE single line */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[34px] font-serif tracking-tight text-white font-normal whitespace-normal sm:whitespace-nowrap leading-tight">
               {headline}
             </h2>
           </div>
 
-          {/* Right Subtitle & Logo-Colored CTA Link (NO bottom line) */}
+          {/* Right Subtitle & Link & Desktop Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-start lg:justify-end gap-4 sm:gap-6 lg:gap-8 pt-1 lg:pt-0">
-            {/* Subtitle on a single line on larger screens */}
+            {/* Subtitle */}
             <p className="text-xs sm:text-sm text-gray-300 font-light italic whitespace-normal lg:whitespace-nowrap leading-relaxed">
               &ldquo;{subtitle}&rdquo;
             </p>
 
-            {/* MEET OUR TEAM: Logo Color (Brand Blue) and NO bottom line */}
+            {/* CTA Link */}
             <Link
               href={ctaHref}
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold tracking-wider uppercase text-brand-blue hover:text-brand-blue-hover transition-colors group flex-shrink-0 whitespace-nowrap"
@@ -125,13 +125,35 @@ export default function TeamSection({
               <span>{ctaText}</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-brand-blue" />
             </Link>
+
+            {/* Desktop Navigation Arrows (Visible when >4 members) */}
+            {publishedMembers.length > 4 && (
+              <div className="hidden md:flex items-center space-x-2 pl-2 border-l border-white/10">
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all shadow-sm"
+                  aria-label="Previous Slide"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={currentIndex >= publishedMembers.length - 1}
+                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all shadow-sm"
+                  aria-label="Next Slide"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* TEAM CARDS CONTAINER:                                                     */}
-        {/* Desktop: Centered when <=4 cards, smooth horizontal scroll when >4 cards */}
-        {/* Mobile: Perfect horizontal touch-swipe carousel (no vertical stacking)   */}
+        {/* UNIFIED TEAM CARDS CONTAINER: Smooth Horizontal Scroll & Touch Swipe      */}
         {/* ========================================================================= */}
         <div
           ref={scrollContainerRef}
@@ -149,30 +171,38 @@ export default function TeamSection({
               className="w-[250px] sm:w-[260px] lg:w-[270px] flex-shrink-0 snap-center sm:snap-start group cursor-pointer bg-slate-900/90 hover:bg-slate-800/90 border border-white/10 hover:border-white/40 rounded-2xl p-3.5 sm:p-4 transition-all duration-300 hover:shadow-xl hover:shadow-black/60 hover:-translate-y-1 flex flex-col justify-between"
             >
               <div>
-                {/* Photo Area with 1:1 Aspect Ratio Square */}
-                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-950 border border-white/10 mb-3">
+                {/* Photo Area — portrait 3:4 ratio so full-body photos display correctly */}
+                <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-slate-950 border border-white/10 mb-3">
                   {member.imageUrl ? (
                     <Image
                       src={member.imageUrl}
                       alt={member.name}
                       fill
                       sizes="(max-width: 640px) 250px, (max-width: 1024px) 260px, 270px"
-                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-white/5 text-white font-serif text-3xl font-bold">
-                      {member.name.charAt(0)}
+                    /* Elegant placeholder when photo has not been uploaded yet */
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-[#0A1420] text-white p-4 text-center">
+                      <div className="w-16 h-16 rounded-2xl bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-white font-serif text-2xl font-bold mb-2 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                        {member.name.charAt(0)}
+                      </div>
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 truncate max-w-[190px]">
+                        {member.department || 'Afro Dream Global'}
+                      </span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity" />
+
+                  {/* Gradient shadow overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity pointer-events-none" />
                 </div>
 
                 {/* Details: Name and Role */}
-                <div className="min-w-0">
+                <div className="min-w-0 space-y-0.5">
                   <h3 className="text-white font-medium text-sm sm:text-base tracking-wide truncate group-hover:text-white transition-colors">
                     {member.name}
                   </h3>
-                  <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-300 group-hover:text-white transition-colors truncate mt-0.5">
+                  <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-300 group-hover:text-white transition-colors truncate">
                     {member.role}
                   </p>
                 </div>
@@ -201,11 +231,11 @@ export default function TeamSection({
         </div>
 
         {/* ========================================================================= */}
-        {/* CONTROLS BAR: Mobile swipe controls (Hidden on desktop)                 */}
-        {/* Left: 01 / 05  |  Center: Pill + Dots  |  Right: (←) (→) circular buttons  */}
+        {/* CONTROLS BAR: Mobile touch controls (Hidden on desktop)                   */}
+        {/* Left: 01 / 08  |  Center: Active Pill + Dots  |  Right: (←) (→) buttons   */}
         {/* ========================================================================= */}
         <div className="flex md:hidden items-center justify-between pt-6 sm:pt-8 border-t border-white/10 mt-4 sm:mt-6">
-          {/* Left: Dynamic Counter e.g. "01 / 05" */}
+          {/* Left: Dynamic Counter e.g. "01 / 08" */}
           <div className="flex items-center space-x-1.5 font-mono text-xs sm:text-sm select-none">
             <span className="text-brand-blue font-bold tracking-wider">
               {formatNum(currentIndex + 1)}
@@ -258,7 +288,7 @@ export default function TeamSection({
       </div>
 
       {/* ========================================================================= */}
-      {/* EXECUTIVE PROFILE MODAL                                                  */}
+      {/* EXECUTIVE & OPERATIONS PROFILE MODAL                                      */}
       {/* ========================================================================= */}
       {selectedMember && (
         <div
@@ -291,8 +321,9 @@ export default function TeamSection({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-white/5 text-white font-serif text-3xl font-bold">
-                    {selectedMember.name.charAt(0)}
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white p-2">
+                    <User className="w-8 h-8 text-brand-blue mb-1" />
+                    <span className="text-xs font-serif font-bold">{selectedMember.name.charAt(0)}</span>
                   </div>
                 )}
               </div>
@@ -321,15 +352,16 @@ export default function TeamSection({
               </div>
             )}
 
-            <div className="space-y-2">
-              <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
-                Professional Profile
-              </h4>
-              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-light">
-                {selectedMember.bio ||
-                  'Key corporate executive managing international freight corridors, maritime documentation, and client operations at Afro Dream Global.'}
-              </p>
-            </div>
+            {selectedMember.bio && selectedMember.bio.trim() !== '' && (
+              <div className="space-y-2">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
+                  Professional Profile
+                </h4>
+                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-light">
+                  {selectedMember.bio}
+                </p>
+              </div>
+            )}
 
             <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center space-x-3">

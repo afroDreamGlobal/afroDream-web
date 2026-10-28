@@ -19,8 +19,8 @@ export default function ServiceHighlightsBar() {
       showOnMobile: true,
     },
     {
-      shortTitle: 'Local Transport (TZ)',
-      fullTitle: 'Local Transportation in Tanzania',
+      shortTitle: 'Local Transport (Bissau & TZ)',
+      fullTitle: 'Local Transportation in Bissau and Tanzania',
       icon: Truck,
       href: '/services/local-transportation-tanzania',
       showOnMobile: false, // Visible on desktop (5 columns); hidden on mobile for clean 4-card 2x2 layout

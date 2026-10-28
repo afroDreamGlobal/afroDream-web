@@ -131,10 +131,13 @@ export interface SiteSettings {
   addressTanzaniaOffice?: string;
 }
 
+export type TeamDivision = 'Executive Leadership' | 'Tanzanian Operation Team' | string;
+
 export interface TeamMember {
   id: string;
   name: string;
   role: string;
+  division?: string;
   department?: string;
   bio?: string;
   imageUrl: string;
@@ -148,4 +151,3 @@ export interface TeamMember {
   createdAt?: string;
   updatedAt?: string;
 }
-

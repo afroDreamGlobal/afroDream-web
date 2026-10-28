@@ -7,7 +7,7 @@ export function mapSupabaseToService(row: any): Service {
   return {
     id: row.id,
     slug: row.slug,
-    title: row.title,
+    title: (row.slug === 'local-transportation-tanzania' || row.id === 'srv-3' || row.title === 'Local Transportation in Tanzania') ? 'Local Transportation in Bissau and Tanzania' : row.title,
     shortDescription: row.short_description || '',
     fullDescription: row.full_description || '',
     imageUrl: row.image_url || '',
