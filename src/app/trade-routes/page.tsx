@@ -11,9 +11,9 @@ import { ArrowRight, Anchor, Navigation, Calendar } from 'lucide-react';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'Trade Routes & Port Corridors — Afro Dream Global',
+  title: 'Trade Routes & Maritime Corridors — Afro Dream Global',
   description:
-    'Direct maritime trade corridors connecting Mtwara Port (Tanzania) and Bissau (Guinea-Bissau) with Tuticorin, Mangalore, Ho Chi Minh City (Cat Lai), and international markets.',
+    'Pan-African maritime corridors connecting Tanzania and Guinea-Bissau with primary destination sectors across India, Vietnam, and global markets.',
 };
 
 async function getLiveRoutes(): Promise<TradeRoute[]> {
@@ -26,21 +26,44 @@ async function getLiveRoutes(): Promise<TradeRoute[]> {
 
       if (!error && data && data.length > 0) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return data.map((row: any) => ({
-          id: row.id,
-          name: row.name,
-          originRegion: row.origin_region,
-          originCountry: row.origin_country,
-          originPort: row.origin_port,
-          destinationRegion: row.destination_region,
-          destinationCountry: row.destination_country,
-          destinationPort: row.destination_port,
-          transitTime: row.transit_time,
-          frequency: row.frequency,
-          cargoTypes: Array.isArray(row.cargo_types) ? row.cargo_types : [],
-          isActive: row.is_active ?? true,
-          isFeatured: row.is_featured ?? false,
-        }));
+        const mapped = data.map((row: any) => {
+          let name = row.name;
+          let destCountry = row.destination_country || 'India';
+          let originCountry = row.origin_country || 'Tanzania & Guinea-Bissau';
+
+          if (name.includes('Tuticorin') || name.includes('South India') || row.id === 'tr-1') {
+            name = 'Tanzania & Bissau to India';
+            destCountry = 'India Sector';
+            originCountry = 'Tanzania & Bissau (Pan-Africa)';
+          } else if (name.includes('Vietnam') && !name.includes('India')) {
+            name = 'Tanzania & Bissau to Vietnam';
+            destCountry = 'Ho Chi Minh City (HCMC) / Cat Lai (Cát Lái), Vietnam';
+            originCountry = 'Tanzania & Bissau (Pan-Africa)';
+          } else if (row.id === 'tr-3' || name.includes('West Africa')) {
+            name = 'Africa to Global Destinations';
+            destCountry = 'Worldwide / Global Markets';
+            originCountry = 'Pan-Africa (Tanzania & Bissau Base)';
+          }
+
+          return {
+            id: row.id,
+            name,
+            originRegion: 'Africa',
+            originCountry,
+            originPort: 'Tanzania & Bissau Hubs',
+            destinationRegion: destCountry,
+            destinationCountry: destCountry,
+            destinationPort: destCountry,
+            transitTime: '14 - 18 Days',
+            frequency: row.frequency,
+            cargoTypes: Array.isArray(row.cargo_types) ? row.cargo_types : [],
+            isActive: row.is_active ?? true,
+            isFeatured: row.is_featured ?? false,
+          };
+        });
+
+        // Filter out redundant 4th route if it duplicates Vietnam
+        return mapped.slice(0, 3);
       }
     } catch (err) {
       console.warn('[Supabase Routes Fetch Error]', err);
@@ -88,11 +111,11 @@ export default async function TradeRoutesPage() {
               GLOBAL LOGISTICS NETWORK
             </span>
             <h1 className="text-4xl sm:text-6xl font-heading uppercase text-white leading-tight">
-              TRADE ROUTES & DESTINATION PORTS
+              TRADE ROUTES &amp; GLOBAL CORRIDORS
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-2xl font-light">
-              Connecting primary agricultural harvest origins across Africa to international processing
-              and commodity consumer centers.
+            <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-3xl font-light leading-relaxed">
+              Aiming across the entire African continent with active port and inland operations in Tanzania and Guinea-Bissau. 
+              Delivering containerized and bulk cargo globally, with primary focus on the India and Vietnam sectors.
             </p>
           </div>
         </section>
@@ -100,7 +123,7 @@ export default async function TradeRoutesPage() {
         {/* Detailed Route Cards */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {routes.map((route) => (
                 <div
                   key={route.id}
@@ -121,23 +144,24 @@ export default async function TradeRoutesPage() {
                       {route.name}
                     </h2>
 
+                    {/* Regional & Schedule Details (No specific port constraints) */}
                     <div className="grid grid-cols-2 gap-4 py-3 border-y border-brand-border/60 text-xs text-gray-600">
                       <div>
-                        <span className="block text-brand-muted uppercase font-medium">Origin Port</span>
+                        <span className="block text-brand-muted uppercase font-medium">African Origin Base</span>
                         <span className="font-bold text-brand-dark text-sm mt-0.5 block">
-                          {route.originPort}, {route.originCountry}
+                          Tanzania &amp; Bissau (Pan-Africa)
                         </span>
                       </div>
                       <div>
-                        <span className="block text-brand-muted uppercase font-medium">Destination Port</span>
+                        <span className="block text-brand-muted uppercase font-medium">Destination Sector</span>
                         <span className="font-bold text-brand-dark text-sm mt-0.5 block">
-                          {route.destinationPort}, {route.destinationCountry}
+                          {route.destinationCountry || route.destinationRegion}
                         </span>
                       </div>
                       <div>
                         <span className="block text-brand-muted uppercase font-medium">Average Transit</span>
                         <span className="font-bold text-brand-dark text-sm mt-0.5 block">
-                          {route.transitTime}
+                          14 - 18 Days
                         </span>
                       </div>
                       <div>
@@ -167,7 +191,7 @@ export default async function TradeRoutesPage() {
 
                   <div className="pt-2">
                     <Link
-                      href={`/quote?origin=${encodeURIComponent(route.originPort)}&destination=${encodeURIComponent(route.destinationPort)}`}
+                      href={`/quote?route=${encodeURIComponent(route.name)}`}
                       className="btn-primary w-full text-center py-2.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-2"
                     >
                       <span>Book Slots on this Corridor</span>
