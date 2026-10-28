@@ -68,7 +68,7 @@ export default function Footer({ settings }: FooterProps = {}) {
   const serviceLinks = [
     { label: 'Container Shipment (Mtwara)', href: '/services/container-shipment' },
     { label: 'Bulk Vessel Shipment', href: '/services/bulk-vessel-shipment' },
-    { label: 'Local Transportation (Tanzania)', href: '/services/local-transportation-tanzania' },
+    { label: 'Local Transportation (Bissau & Tanzania)', href: '/services/local-transportation-tanzania' },
     { label: 'Clearing at Port of Destination (POD)', href: '/services/clearing-port-of-destination' },
     { label: 'Local Transportation in India', href: '/services/local-transportation-india' },
   ];
@@ -119,7 +119,7 @@ export default function Footer({ settings }: FooterProps = {}) {
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 text-xs">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>CAJU SWIFT SARL / CSS (Guinea-Bissau)</span>
+                  <span>CAJU SWIFT SARL / CSS (Dubai)</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
@@ -128,6 +128,10 @@ export default function Footer({ settings }: FooterProps = {}) {
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                   <span>BREDAS Traders (Tanzania - Mtwara)</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <span>Delta Infralogistics global (India)</span>
                 </div>
               </div>
             </div>
@@ -333,7 +337,7 @@ export default function Footer({ settings }: FooterProps = {}) {
             &copy; {new Date().getFullYear()} {siteSettings.companyName || 'Afro Dream Global'}. All rights reserved.
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            <Link href="/about" className="hover:text-white transition-colors">
+            <Link href="/privacy" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>
             <span className="text-slate-700 hidden sm:inline">•</span>

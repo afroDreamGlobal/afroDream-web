@@ -13,8 +13,11 @@ import { getLivePublishedServices } from '@/lib/services';
 import { getLivePublishedTeamMembers } from '@/lib/team';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { SiteSettings } from '@/lib/types';
-import Link from 'next/link';
-import { ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  Ship,
+  Truck,
+} from 'lucide-react';
 
 export const revalidate = 0;
 
@@ -115,68 +118,79 @@ export default async function HomePage() {
         {/* Team Leadership Section (Exact match with reference design) */}
         <TeamSection teamMembers={teamMembers} />
 
-        {/* Request a Quote Section */}
-        <section id="quote-section" className="py-20 lg:py-28 bg-white relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Request a Quote Section (Freight Inquiries) */}
+        <section
+          id="quote-section"
+          className="py-16 sm:py-24 lg:py-28 bg-gradient-to-b from-[#F5F8FC] via-[#EEF4FB] to-[#E8F0F9] relative overflow-hidden border-t border-slate-200/80"
+        >
+          {/* Subtle Ambient Glows */}
+          <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand-blue/10 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-cyan-400/10 rounded-full blur-[120px] pointer-events-none" />
+
+          {/* Subtle Nautical Dot Matrix */}
+          <div className="absolute inset-0 bg-[radial-gradient(#2B7CC0_1px,transparent_1px)] [background-size:28px_28px] opacity-10 pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+              {/* Left Column: Heading, Value Cards, WhatsApp Desk */}
               <div className="lg:col-span-5 space-y-6">
                 <div>
-                  <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-brand-blue block mb-1">
-                    FREIGHT INQUIRIES
-                  </span>
-                  <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading uppercase text-brand-dark leading-none">
-                    REQUEST A FREIGHT QUOTE
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-3 shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
+                    <span>FREIGHT INQUIRIES</span>
+                  </div>
+
+                  <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading uppercase text-brand-dark leading-[0.95] tracking-tight">
+                    REQUEST A <span className="bg-gradient-to-r from-brand-blue via-[#1E67A2] to-cyan-600 bg-clip-text text-transparent">FREIGHT QUOTE</span>
                   </h2>
+
+                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-light mt-3">
+                    Partner with an established African logistics provider. Whether you need
+                    dedicated container slots from <strong className="font-semibold text-slate-800">Mtwara Port</strong>, bulk vessel chartering, or inland delivery to Indian & Vietnamese processing centers, our commercial desk is ready to structure your freight plan.
+                  </p>
                 </div>
 
-                <p className="text-base text-gray-600 leading-relaxed font-light">
-                  Partner with an established African logistics provider. Whether you need
-                  container slots from Mtwara Port, bulk vessel chartering, or inland delivery to Indian
-                  processing centers, our commercial team is ready to structure your freight plan.
-                </p>
+                {/* 3 High-Impact Value Proposition Cards */}
+                <div className="space-y-3 pt-1">
+                  <div className="p-4 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/90 shadow-sm hover:shadow-md hover:border-brand-blue/40 hover:translate-x-1 transition-all duration-200 flex items-start gap-3.5 group">
+                    <div className="w-10 h-10 rounded-xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue flex items-center justify-center flex-shrink-0 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-200">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-brand-dark">Transparent Carrier Tariffs</div>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                        Direct shipping line terms with confirmed rates and zero unforeseen demurrage charges.
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="space-y-4 pt-2">
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">
-                      <strong>Transparent Quotations:</strong> Direct carrier terms with zero
-                      unforeseen demurrage charges.
-                    </span>
+                  <div className="p-4 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/90 shadow-sm hover:shadow-md hover:border-cyan-500/40 hover:translate-x-1 transition-all duration-200 flex items-start gap-3.5 group">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-700 flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-200">
+                      <Ship className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-brand-dark">RCN Commodity Care & Ventilation</div>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                        Decades of combined expertise in Raw Cashew Nut humidity management and vessel stowage.
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">
-                      <strong>Commodity Expertise:</strong> Decades of combined experience in Raw Cashew
-                      Nuts (RCN) packing, ventilation, and transit care.
-                    </span>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">
-                      <strong>End-to-End Handling:</strong> From farm collection warehouses in Tanzania
-                      to delivery at your factory door in India.
-                    </span>
-                  </div>
-                </div>
 
-                <div className="p-5 rounded-xl bg-brand-bg border border-brand-border space-y-2">
-                  <div className="text-xs font-bold uppercase text-brand-dark tracking-wider">
-                    Need Immediate Assistance?
-                  </div>
-                  <div className="text-sm text-gray-700">
-                    Reach our direct booking operations desk on WhatsApp:{' '}
-                    <a
-                      href={`https://wa.me/${(settings.whatsappNumber || settings.phoneTanzania || '255744555890').replace(/[^0-9]/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-brand-blue hover:underline"
-                    >
-                      {settings.whatsappNumber || settings.phoneTanzania || '+255 744 555 890'}
-                    </a>
+                  <div className="p-4 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-500/40 hover:translate-x-1 transition-all duration-200 flex items-start gap-3.5 group">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-700 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-200">
+                      <Truck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-brand-dark">End-to-End Multimodal Execution</div>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                        From farm collection warehouses in Tanzania to factory-door delivery in India & Vietnam.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* Right Column: Quote Form Card */}
               <div className="lg:col-span-7">
                 <QuoteForm />
               </div>

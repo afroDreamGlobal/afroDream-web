@@ -205,7 +205,7 @@ export default function AdminLoginForm({ onSuccess, redirectUrl }: AdminLoginFor
 
       {/* Security Disclaimer Note */}
       <p className="relative z-10 text-[11px] text-slate-500 text-center mt-6 max-w-sm">
-        Afro Dream Global Logistics Management System &copy; {new Date().getFullYear()}.
+        Afro Dream Global Logistics Management System &copy; 2026.
         Unauthorized access attempts are monitored and logged.
       </p>
     </div>

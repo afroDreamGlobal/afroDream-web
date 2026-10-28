@@ -24,6 +24,7 @@ export default function AdminOverviewPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const safetyTimer = setTimeout(() => setIsLoading(false), 2500);
     // 1. Fetch Quotes
     fetch('/api/quotes')
       .then((res) => res.json())

@@ -1,6 +1,27 @@
 import { supabaseAdmin, isSupabaseConfigured } from './supabase';
-import { store, INITIAL_TEAM_MEMBERS } from './store';
+import { store } from './store';
 import { TeamMember } from './types';
+
+// Helper for guaranteed query timeout
+async function withTimeout<T>(promise: PromiseLike<T>, ms = 2000): Promise<T> {
+  let timer: NodeJS.Timeout;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('Supabase query timed out')), ms);
+  });
+  return Promise.race([Promise.resolve(promise), timeoutPromise]).finally(() => clearTimeout(timer));
+}
+
+// Helper to determine division safely
+function resolveDivision(row: { division?: string; department?: string; role?: string; name?: string }): string {
+  if (row.division && row.division.trim() !== '') {
+    return row.division.trim();
+  }
+  const text = `${row.department || ''} ${row.role || ''} ${row.name || ''}`.toLowerCase();
+  if (text.includes('tanzan') || text.includes('mtwara') || text.includes('haulage') || text.includes('corridor')) {
+    return 'Tanzanian Operation Team';
+  }
+  return 'Executive Leadership';
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapSupabaseToTeamMember(row: any): TeamMember {
@@ -8,6 +29,7 @@ export function mapSupabaseToTeamMember(row: any): TeamMember {
     id: row.id,
     name: row.name || '',
     role: row.role || '',
+    division: resolveDivision(row),
     department: row.department || '',
     bio: row.bio || '',
     imageUrl: row.image_url || row.imageUrl || '',
@@ -46,34 +68,41 @@ export function mapTeamMemberToSupabase(member: Partial<TeamMember>) {
 export async function getLiveTeamMembers(): Promise<TeamMember[]> {
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
-      // 1. Attempt reading from dedicated 'team_members' table
-      const { data, error } = await supabaseAdmin
-        .from('team_members')
-        .select('*')
-        .order('display_order', { ascending: true });
+      // 1. Attempt reading from dedicated 'team_members' table with a 2-second timeout
+      const res = await withTimeout(
+        supabaseAdmin
+          .from('team_members')
+          .select('*')
+          .order('display_order', { ascending: true }),
+        2000
+      );
 
-      if (!error && data && data.length > 0) {
-        return data.map(mapSupabaseToTeamMember);
+      if (!res.error && Array.isArray(res.data) && res.data.length > 0) {
+        return res.data.map(mapSupabaseToTeamMember);
       }
-    } catch {
-      // ignore and try settings fallback
+    } catch (e) {
+      console.warn('[Supabase Team Table Fetch Timeout/Error, trying fallback]', e);
     }
 
     try {
-      // 2. Fallback: check site_settings.settings_data.team_members
-      const { data: settingsRow } = await supabaseAdmin
-        .from('site_settings')
-        .select('settings_data')
-        .eq('id', 'primary')
-        .maybeSingle();
+      // 2. Fallback: check site_settings.settings_data.team_members with a 1.5-second timeout
+      const res = await withTimeout(
+        supabaseAdmin
+          .from('site_settings')
+          .select('settings_data')
+          .eq('id', 'primary')
+          .maybeSingle(),
+        1500
+      );
 
       if (
-        settingsRow?.settings_data &&
-        Array.isArray(settingsRow.settings_data.team_members)
+        res.data?.settings_data &&
+        Array.isArray(res.data.settings_data.team_members) &&
+        res.data.settings_data.team_members.length > 0
       ) {
-        return (settingsRow.settings_data.team_members as TeamMember[]).sort(
-          (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
-        );
+        return (res.data.settings_data.team_members as TeamMember[])
+          .map(mapSupabaseToTeamMember)
+          .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
       }
     } catch {
       // ignore
@@ -94,47 +123,53 @@ export async function getLivePublishedTeamMembers(): Promise<TeamMember[]> {
 export async function saveLiveTeamMember(
   memberData: Partial<TeamMember> & { name: string }
 ): Promise<TeamMember> {
-  // 1. Update in-memory store
+  // 1. Update in-memory store immediately
   const saved = store.saveTeamMember(memberData);
 
   if (isSupabaseConfigured && supabaseAdmin) {
-    // 2. Try inserting/updating public.team_members table
+    // 2. Try inserting/updating public.team_members table with safety timeout
     try {
       const dbRecord = mapTeamMemberToSupabase(saved);
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
       if (saved.id && uuidRegex.test(saved.id)) {
-        await supabaseAdmin
-          .from('team_members')
-          .update(dbRecord)
-          .eq('id', saved.id);
+        await withTimeout(
+          supabaseAdmin.from('team_members').update(dbRecord).eq('id', saved.id),
+          2500
+        );
       } else {
-        const { data: inserted } = await supabaseAdmin
-          .from('team_members')
-          .insert({
-            ...dbRecord,
-            created_at: new Date().toISOString(),
-          })
-          .select()
-          .maybeSingle();
+        const res = await withTimeout(
+          supabaseAdmin
+            .from('team_members')
+            .insert({
+              ...dbRecord,
+              created_at: new Date().toISOString(),
+            })
+            .select()
+            .maybeSingle(),
+          2500
+        );
 
-        if (inserted?.id) {
-          saved.id = inserted.id;
+        if (res.data?.id) {
+          saved.id = res.data.id;
         }
       }
-    } catch {
-      // Table may not exist yet in Postgres schema, continue to JSON storage
+    } catch (dbErr) {
+      console.warn('[Supabase Table Save Warning]', dbErr);
     }
 
     // 3. Guarantee persistence in site_settings.settings_data.team_members
     try {
-      const { data: settingsRow } = await supabaseAdmin
-        .from('site_settings')
-        .select('settings_data')
-        .eq('id', 'primary')
-        .maybeSingle();
+      const res = await withTimeout(
+        supabaseAdmin
+          .from('site_settings')
+          .select('settings_data')
+          .eq('id', 'primary')
+          .maybeSingle(),
+        2000
+      );
 
-      const existingData = settingsRow?.settings_data || {};
+      const existingData = res.data?.settings_data || {};
       const currentList: TeamMember[] = Array.isArray(existingData.team_members)
         ? existingData.team_members
         : [];
@@ -144,16 +179,19 @@ export async function saveLiveTeamMember(
         updatedList.push(saved);
       }
 
-      await supabaseAdmin
-        .from('site_settings')
-        .update({
-          settings_data: {
-            ...existingData,
-            team_members: updatedList,
-          },
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', 'primary');
+      await withTimeout(
+        supabaseAdmin
+          .from('site_settings')
+          .update({
+            settings_data: {
+              ...existingData,
+              team_members: updatedList,
+            },
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', 'primary'),
+        2000
+      );
     } catch (settingsErr) {
       console.warn('[Supabase Team Settings Save Error]', settingsErr);
     }
@@ -167,33 +205,42 @@ export async function deleteLiveTeamMember(id: string): Promise<boolean> {
 
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
-      await supabaseAdmin.from('team_members').delete().eq('id', id);
+      await withTimeout(
+        supabaseAdmin.from('team_members').delete().eq('id', id),
+        2000
+      );
     } catch {
       // ignore
     }
 
     try {
-      const { data: settingsRow } = await supabaseAdmin
-        .from('site_settings')
-        .select('settings_data')
-        .eq('id', 'primary')
-        .maybeSingle();
+      const res = await withTimeout(
+        supabaseAdmin
+          .from('site_settings')
+          .select('settings_data')
+          .eq('id', 'primary')
+          .maybeSingle(),
+        2000
+      );
 
-      if (settingsRow?.settings_data) {
-        const currentList = Array.isArray(settingsRow.settings_data.team_members)
-          ? settingsRow.settings_data.team_members.filter((m: { id: string }) => m.id !== id)
+      if (res.data?.settings_data) {
+        const currentList = Array.isArray(res.data.settings_data.team_members)
+          ? res.data.settings_data.team_members.filter((m: { id: string }) => m.id !== id)
           : [];
 
-        await supabaseAdmin
-          .from('site_settings')
-          .update({
-            settings_data: {
-              ...settingsRow.settings_data,
-              team_members: currentList,
-            },
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', 'primary');
+        await withTimeout(
+          supabaseAdmin
+            .from('site_settings')
+            .update({
+              settings_data: {
+                ...res.data.settings_data,
+                team_members: currentList,
+              },
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', 'primary'),
+          2000
+        );
       }
     } catch {
       // ignore

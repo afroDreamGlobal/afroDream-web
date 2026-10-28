@@ -13,7 +13,7 @@ import {
   Image as ImageIcon,
   Eye,
   Layers,
-  Sparkles,
+  LayoutTemplate,
   Link2,
   RefreshCw,
   ArrowRight,
@@ -237,7 +237,7 @@ export default function AdminSettingsPage() {
               </p>
             </div>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue w-fit">
-              <Sparkles className="w-3.5 h-3.5" />
+              <LayoutTemplate className="w-3.5 h-3.5" />
               Customizable Banner
             </span>
           </div>
@@ -246,7 +246,7 @@ export default function AdminSettingsPage() {
           <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-brand-blue text-white flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-5 h-5" />
+                <LayoutTemplate className="w-5 h-5" />
               </div>
               <div>
                 <h4 className="text-xs font-bold text-slate-900">Dedicated Hero Banner Management Page</h4>
