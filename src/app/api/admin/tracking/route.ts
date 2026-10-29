@@ -2,8 +2,16 @@ import { NextResponse } from 'next/server';
 import { store } from '@/lib/store';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { Shipment } from '@/lib/types';
+import { verifyAdminRequest } from '@/lib/adminAuth';
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data: shipmentsData, error } = await supabaseAdmin
@@ -69,6 +77,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const json = await request.json();
     if (!json.trackingNumber) {

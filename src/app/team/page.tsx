@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { store } from '@/lib/store';
@@ -9,10 +10,20 @@ import TeamClientView from './TeamClientView';
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Our Team — Afro Dream Global | Executive Leadership & Operations',
   description:
     'Meet the specialized maritime strategists, port captains, and on-ground logistics architects directing container shipments and bulk vessel operations at Afro Dream Global.',
+  alternates: {
+    canonical: '/team',
+  },
+  openGraph: {
+    title: 'Our Team — Afro Dream Global | Executive Leadership & Operations',
+    description:
+      'Meet the specialized maritime strategists, port captains, and on-ground logistics architects directing container shipments and bulk vessel operations at Afro Dream Global.',
+    url: '/team',
+    type: 'website',
+  },
 };
 
 async function getLiveSettings(): Promise<SiteSettings> {
@@ -58,15 +69,15 @@ export default async function TeamPage() {
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-blue/15 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-mono uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-sans font-bold uppercase tracking-widest">
               <span>LEADERSHIP & REGIONAL OPERATIONS</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif tracking-tight text-white font-normal max-w-4xl mx-auto leading-tight">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-heading uppercase tracking-wide text-white font-normal max-w-4xl mx-auto leading-tight">
               Our people are our company.
             </h1>
 
-            <p className="text-base sm:text-xl text-gray-300 font-light max-w-2xl mx-auto leading-relaxed italic">
+            <p className="text-base sm:text-xl text-gray-300 font-sans font-light max-w-2xl mx-auto leading-relaxed italic">
               &ldquo;Expertise becomes meaningful when it is shared.&rdquo;
             </p>
           </div>

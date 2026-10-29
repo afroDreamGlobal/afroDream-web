@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import ServiceHighlightsBar from '@/components/ServiceHighlightsBar';
@@ -20,6 +21,12 @@ import {
 } from 'lucide-react';
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
 
 async function getLiveSettings(): Promise<SiteSettings> {
   if (isSupabaseConfigured && supabaseAdmin) {

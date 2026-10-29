@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { isCloudinaryConfigured } from '@/lib/cloudinary';
+import { verifyAdminRequest } from '@/lib/adminAuth';
 
 export async function POST(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;

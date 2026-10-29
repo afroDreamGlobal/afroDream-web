@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getLiveSettings } from '@/lib/settings';
@@ -7,10 +8,20 @@ import Link from 'next/link';
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Contact Us — Afro Dream Global | Offices in Tanzania, Guinea-Bissau & India',
   description:
     'Contact Afro Dream Global operations desk for vessel schedules, container allocations, and customs clearance inquiries.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact Us — Afro Dream Global | Offices in Tanzania, Guinea-Bissau & India',
+    description:
+      'Contact Afro Dream Global operations desk for vessel schedules, container allocations, and customs clearance inquiries.',
+    url: '/contact',
+    type: 'website',
+  },
 };
 
 export default async function ContactPage() {

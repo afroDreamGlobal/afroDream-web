@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import QuoteForm from '@/components/QuoteForm';
@@ -7,10 +8,20 @@ import { ShieldCheck, CheckCircle2, Phone, Mail } from 'lucide-react';
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Request a Freight Quote — Afro Dream Global',
   description:
     'Submit your shipping inquiry for container shipments, bulk vessels, and inland transport between Africa, India, and Vietnam.',
+  alternates: {
+    canonical: '/quote',
+  },
+  openGraph: {
+    title: 'Request a Freight Quote — Afro Dream Global',
+    description:
+      'Submit your shipping inquiry for container shipments, bulk vessels, and inland transport between Africa, India, and Vietnam.',
+    url: '/quote',
+    type: 'website',
+  },
 };
 
 export default async function QuotePage({

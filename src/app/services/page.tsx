@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { store } from '@/lib/store';
@@ -22,10 +23,20 @@ import {
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Our Services — Afro Dream Global | Shipping, Bulk Vessels & Multimodal Freight',
   description:
     'Comprehensive African shipping solutions: Container Shipments from Mtwara Port, Bulk Vessel Shipments, Inland Logistics in Tanzania & India, and Destination Port Clearing.',
+  alternates: {
+    canonical: '/services',
+  },
+  openGraph: {
+    title: 'Our Services — Afro Dream Global | Shipping, Bulk Vessels & Multimodal Freight',
+    description:
+      'Comprehensive African shipping solutions: Container Shipments from Mtwara Port, Bulk Vessel Shipments, Inland Logistics in Tanzania & India, and Destination Port Clearing.',
+    url: '/services',
+    type: 'website',
+  },
 };
 
 async function getLiveSettings(): Promise<SiteSettings> {

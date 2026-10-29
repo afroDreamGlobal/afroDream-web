@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 import { store } from '@/lib/store';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import { verifyAdminRequest } from '@/lib/adminAuth';
 
 export async function PUT(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const json = await request.json();
     const { id, status, internalNotes } = json;
