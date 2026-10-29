@@ -3,6 +3,7 @@ import { store } from '@/lib/store';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { sendQuoteAcknowledgementEmail } from '@/lib/brevo';
 import * as z from 'zod';
+import { verifyAdminRequest } from '@/lib/adminAuth';
 
 const quoteRequestSchema = z.object({
   customerName: z.string().min(2),
@@ -24,6 +25,7 @@ const quoteRequestSchema = z.object({
   additionalNotes: z.string().optional(),
 });
 
+// PUBLIC: Allows customers on /quote and homepage to submit quote inquiries
 export async function POST(request: Request) {
   try {
     const json = await request.json();
@@ -125,7 +127,15 @@ function mapSupabaseToQuote(row: any) {
   };
 }
 
-export async function GET() {
+// PRIVILEGED: Only authenticated administrators can fetch customer quote inquiries
+export async function GET(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data, error } = await supabaseAdmin

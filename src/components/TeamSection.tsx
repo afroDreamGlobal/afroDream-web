@@ -105,7 +105,7 @@ export default function TeamSection({
                 {subHeadline}
               </span>
             )}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[34px] font-serif tracking-tight text-white font-normal whitespace-normal sm:whitespace-nowrap leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[34px] font-heading uppercase tracking-wide text-white leading-tight">
               {headline}
             </h2>
           </div>
@@ -175,7 +175,7 @@ export default function TeamSection({
                   ) : (
                     /* Elegant placeholder when photo has not been uploaded yet */
                     <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-[#0A1420] text-white p-4 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-white font-serif text-2xl font-bold mb-2 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                      <div className="w-16 h-16 rounded-2xl bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-white font-heading text-3xl font-bold mb-2 shadow-inner group-hover:scale-105 transition-transform duration-300">
                         {member.name.charAt(0)}
                       </div>
                       <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 truncate max-w-[190px]">
@@ -240,7 +240,7 @@ export default function TeamSection({
         {/* ========================================================================= */}
         <div className="flex md:hidden items-center justify-between pt-6 sm:pt-8 border-t border-white/10 mt-4 sm:mt-6">
           {/* Left: Dynamic Counter e.g. "01 / 08" */}
-          <div className="flex items-center space-x-1.5 font-mono text-xs sm:text-sm select-none">
+          <div className="flex items-center space-x-1.5 font-sans text-xs sm:text-sm select-none">
             <span className="text-brand-blue font-bold tracking-wider">
               {formatNum(currentIndex + 1)}
             </span>
@@ -327,7 +327,7 @@ export default function TeamSection({
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white p-2">
                     <User className="w-8 h-8 text-brand-blue mb-1" />
-                    <span className="text-xs font-serif font-bold">{selectedMember.name.charAt(0)}</span>
+                    <span className="text-xs font-heading font-bold">{selectedMember.name.charAt(0)}</span>
                   </div>
                 )}
               </div>
@@ -338,7 +338,7 @@ export default function TeamSection({
                     {selectedMember.department}
                   </span>
                 )}
-                <h3 className="text-2xl font-serif text-white font-normal">
+                <h3 className="text-2xl font-sans font-bold text-white tracking-tight">
                   {selectedMember.name}
                 </h3>
                 <p className="text-xs font-semibold tracking-wider text-gray-300 uppercase">

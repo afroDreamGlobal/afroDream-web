@@ -70,7 +70,7 @@ function TeamSectionRow({
           <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-brand-blue block">
             {subtitle}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-tight">
+          <h2 className="font-heading uppercase tracking-wide text-white text-3xl sm:text-4xl">
             {title}
           </h2>
         </div>
@@ -180,7 +180,7 @@ export default function TeamClientView({ initialMembers }: TeamClientViewProps) 
           ) : (
             /* Elegant placeholder when photo has not been uploaded yet */
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-[#0A1420] text-white p-4 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-white font-serif text-2xl font-bold mb-2 shadow-inner group-hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-2xl bg-brand-blue/15 border border-brand-blue/30 flex items-center justify-center text-white font-heading text-3xl font-bold mb-2 shadow-inner group-hover:scale-105 transition-transform duration-300">
                 {member.name.charAt(0)}
               </div>
               <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 truncate max-w-[190px]">
@@ -218,7 +218,7 @@ export default function TeamClientView({ initialMembers }: TeamClientViewProps) 
       {initialMembers.length === 0 ? (
         <div className="text-center py-16 px-4 bg-slate-900/80 rounded-2xl border border-white/10 max-w-xl mx-auto space-y-3">
           <Users className="w-10 h-10 text-gray-400 mx-auto" />
-          <h3 className="text-lg font-serif text-white">Personnel Directory</h3>
+          <h3 className="text-xl font-heading uppercase tracking-wide text-white">Personnel Directory</h3>
           <p className="text-xs text-gray-300 leading-relaxed font-light">
             Team members will appear here once added and published in the admin operations portal.
           </p>
@@ -287,7 +287,7 @@ export default function TeamClientView({ initialMembers }: TeamClientViewProps) 
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white p-2">
                     <User className="w-8 h-8 text-brand-blue mb-1" />
-                    <span className="text-xs font-serif font-bold">{selectedMember.name.charAt(0)}</span>
+                    <span className="text-xs font-heading font-bold">{selectedMember.name.charAt(0)}</span>
                   </div>
                 )}
               </div>
@@ -298,7 +298,7 @@ export default function TeamClientView({ initialMembers }: TeamClientViewProps) 
                     {selectedMember.department}
                   </span>
                 )}
-                <h3 className="text-2xl font-serif text-white font-normal">
+                <h3 className="text-2xl font-sans font-bold text-white tracking-tight">
                   {selectedMember.name}
                 </h3>
                 <p className="text-xs font-semibold tracking-wider text-gray-300 uppercase">

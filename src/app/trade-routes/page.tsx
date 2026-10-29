@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TradeRoutesSection from '@/components/TradeRoutesSection';
@@ -10,10 +11,20 @@ import { ArrowRight, Anchor, Navigation, Calendar } from 'lucide-react';
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Trade Routes & Maritime Corridors — Afro Dream Global',
   description:
     'Pan-African maritime corridors connecting Tanzania and Guinea-Bissau with primary destination sectors across India, Vietnam, and global markets.',
+  alternates: {
+    canonical: '/trade-routes',
+  },
+  openGraph: {
+    title: 'Trade Routes & Maritime Corridors — Afro Dream Global',
+    description:
+      'Pan-African maritime corridors connecting Tanzania and Guinea-Bissau with primary destination sectors across India, Vietnam, and global markets.',
+    url: '/trade-routes',
+    type: 'website',
+  },
 };
 
 async function getLiveRoutes(): Promise<TradeRoute[]> {

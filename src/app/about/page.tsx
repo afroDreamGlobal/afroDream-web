@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
@@ -6,14 +7,24 @@ import Link from 'next/link';
 import { store } from '@/lib/store';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { SiteSettings } from '@/lib/types';
-import { Shield, Globe, Award, Anchor, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Shield, Globe, Anchor } from 'lucide-react';
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'About Us — Afro Dream Global | African Freight Forwarding & Logistics',
   description:
     'Learn about Afro Dream Global, our operations through CAJU SWIFT SARL in Guinea-Bissau since 2022, and our containerized Raw Cashew Nut shipping network in Tanzania.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About Us — Afro Dream Global | African Freight Forwarding & Logistics',
+    description:
+      'Learn about Afro Dream Global, our operations through CAJU SWIFT SARL in Guinea-Bissau since 2022, and our containerized Raw Cashew Nut shipping network in Tanzania.',
+    url: '/about',
+    type: 'website',
+  },
 };
 
 async function getLiveSettings(): Promise<SiteSettings> {
@@ -59,7 +70,7 @@ export default async function AboutPage() {
           <div className="absolute inset-0 z-0 opacity-20">
             <Image
               src={heroImage}
-              alt="Global logistics port"
+              alt="Afro Dream Global maritime shipping and port logistics operations"
               fill
               className="object-cover"
               priority
@@ -125,7 +136,7 @@ export default async function AboutPage() {
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 aspect-[4/3]">
                   <Image
                     src={aboutImage}
-                    alt="Port cargo handling"
+                    alt="Afro Dream Global port cargo handling and container operations"
                     fill
                     className="object-cover"
                   />

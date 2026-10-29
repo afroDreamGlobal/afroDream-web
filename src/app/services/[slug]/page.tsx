@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import QuoteForm from '@/components/QuoteForm';
@@ -9,7 +10,7 @@ import { SiteSettings } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, Shield, Globe, Navigation, ChevronRight } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -44,6 +45,50 @@ export async function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
 
+export async function generateMetadata({ params }: ServiceDetailPageProps): Promise<Metadata> {
+  const service = await getLiveServiceBySlug(params.slug);
+
+  if (!service) {
+    return {
+      title: 'Service Not Found',
+      description: 'The requested shipping and logistics service could not be found.',
+    };
+  }
+
+  const title = `${service.title} | Afro Dream Global`;
+  const description =
+    service.shortDescription?.trim() ||
+    `Specialized ${service.title.toLowerCase()} solutions connecting African ports in Tanzania and Guinea-Bissau with India, Vietnam, and global markets.`;
+  const canonicalUrl = `/services/${service.slug}`;
+  const ogImage = service.imageUrl || '/images/logo.png';
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: 'website',
+      images: [
+        {
+          url: ogImage,
+          alt: service.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
+}
+
 export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const service = await getLiveServiceBySlug(params.slug);
 
@@ -55,8 +100,60 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
   const relatedServices = allServices.filter((s) => s.id !== service.id).slice(0, 3);
   const settings = await getLiveSettings();
 
+  // JSON-LD Structured Data for Service & Breadcrumbs
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.title,
+    description: service.shortDescription || service.fullDescription,
+    provider: {
+      '@type': 'Organization',
+      name: 'Afro Dream Global',
+      url: 'https://www.afrodream.in',
+    },
+    serviceType: service.category || 'Shipping & Freight Forwarding',
+    areaServed: ['Tanzania', 'Guinea-Bissau', 'India', 'Vietnam'],
+    url: `https://www.afrodream.in/services/${service.slug}`,
+    ...(service.imageUrl ? { image: service.imageUrl } : {}),
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.afrodream.in',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Services',
+        item: 'https://www.afrodream.in/services',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: service.title,
+        item: `https://www.afrodream.in/services/${service.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Navbar
         announcementText={settings.announcementBarText}
         phoneText={settings.phoneTanzania}

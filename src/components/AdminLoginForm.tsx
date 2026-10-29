@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AfroDreamLogo from '@/components/AfroDreamLogo';
 import {
@@ -28,10 +27,10 @@ export default function AdminLoginForm({ onSuccess, redirectUrl }: AdminLoginFor
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return; // Prevent duplicate submissions
+
     setIsLoading(true);
     setError(null);
 
@@ -47,36 +46,24 @@ export default function AdminLoginForm({ onSuccess, redirectUrl }: AdminLoginFor
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // Set session cookies
-        const token = `active_session_${Date.now()}`;
-        document.cookie = `adg_session=${token}; path=/; max-age=86400`;
-        document.cookie = `adg_admin_token=${token}; path=/; max-age=86400`;
-
         if (onSuccess) {
           onSuccess();
         }
-        window.location.href = redirectUrl || '/admin';
+        // Sanitize redirectUrl to guarantee an internal relative path (prevents Open Redirect)
+        const safeRedirect =
+          redirectUrl &&
+          redirectUrl.startsWith('/') &&
+          !redirectUrl.startsWith('//') &&
+          !redirectUrl.includes(':')
+            ? redirectUrl
+            : '/admin';
+        window.location.href = safeRedirect;
         return;
       } else {
         setError(data.message || 'Invalid administrator email or password.');
       }
     } catch {
-      // Local fallback verification
-      if (
-        trimmedEmail === 'admin@afrodreamglobal.com' &&
-        (password === 'admin123' || password === 'AfroDream2026!Secure')
-      ) {
-        const token = `active_session_${Date.now()}`;
-        document.cookie = `adg_session=${token}; path=/; max-age=86400`;
-        document.cookie = `adg_admin_token=${token}; path=/; max-age=86400`;
-
-        if (onSuccess) {
-          onSuccess();
-        }
-        window.location.href = redirectUrl || '/admin';
-        return;
-      }
-      setError('Unable to authenticate. Please check your credentials and try again.');
+      setError('Unable to reach the authentication server. Please check your network connection and try again.');
     } finally {
       setIsLoading(false);
     }

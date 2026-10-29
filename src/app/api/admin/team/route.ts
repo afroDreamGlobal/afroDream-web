@@ -4,6 +4,7 @@ import {
   saveLiveTeamMember,
   deleteLiveTeamMember,
 } from '@/lib/team';
+import { verifyAdminRequest } from '@/lib/adminAuth';
 
 export async function GET() {
   try {
@@ -16,6 +17,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const json = await request.json();
     if (!json.name) {
@@ -34,6 +42,13 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!(await verifyAdminRequest(request))) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized. Administrator session required.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

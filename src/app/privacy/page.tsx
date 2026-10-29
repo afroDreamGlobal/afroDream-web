@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
@@ -8,10 +9,20 @@ import { SiteSettings } from '@/lib/types';
 
 export const revalidate = 0;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Privacy Policy — Afro Dream Global',
   description:
     'Privacy Policy of Afro Dream Global. Learn how we handle commercial freight inquiries, consignment documentation, and trade confidentiality.',
+  alternates: {
+    canonical: '/privacy',
+  },
+  openGraph: {
+    title: 'Privacy Policy — Afro Dream Global',
+    description:
+      'Privacy Policy of Afro Dream Global. Learn how we handle commercial freight inquiries, consignment documentation, and trade confidentiality.',
+    url: '/privacy',
+    type: 'website',
+  },
 };
 
 async function getLiveSettings(): Promise<SiteSettings> {
