@@ -177,7 +177,6 @@ export default async function ServicesPage() {
             <div className="space-y-16 sm:space-y-24">
               {services.map((service, index) => {
                 const isEven = index % 2 === 1;
-                const indexStr = String(index + 1).padStart(2, '0');
 
                 return (
                   <div
@@ -209,13 +208,6 @@ export default async function ServicesPage() {
                           {getServiceCategoryIcon(service.category, service.iconName)}
                           <span>{service.category}</span>
                         </div>
-                      </div>
-
-                      {/* Service Number on Image Corner */}
-                      <div className="absolute bottom-4 right-4 z-10">
-                        <span className="w-10 h-10 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-sm font-mono font-bold text-cyan-300 flex items-center justify-center shadow-lg">
-                          {indexStr}
-                        </span>
                       </div>
                     </div>
 
