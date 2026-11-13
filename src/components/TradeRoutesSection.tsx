@@ -114,7 +114,7 @@ export default function TradeRoutesSection({ routes }: TradeRoutesSectionProps) 
           {/* ----------------------------------------------------------------------- */}
           {/* ZONE 2 (CENTER): DOTTED WORLD MATRIX MAP WITH RADIATING ARCS            */}
           {/* ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-6 relative w-full flex items-center justify-center">
+          <div className="lg:col-span-5 relative w-full flex items-center justify-center">
             <div className="w-full aspect-[16/9] max-h-[360px] relative select-none">
               <svg
                 viewBox="0 0 800 400"
@@ -381,7 +381,7 @@ export default function TradeRoutesSection({ routes }: TradeRoutesSectionProps) 
           {/* ----------------------------------------------------------------------- */}
           {/* ZONE 3 (RIGHT): TABS & VERTICAL PORT LIST (EXACT REFERRAL MATCH)        */}
           {/* ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-3 flex flex-col justify-center">
+          <div className="lg:col-span-4 flex flex-col justify-center">
             {/* Horizontal Region Tabs */}
             <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
               <button
@@ -431,10 +431,10 @@ export default function TradeRoutesSection({ routes }: TradeRoutesSectionProps) 
                     onClick={() => setSelectedPort(port.name)}
                     className="flex items-center justify-between w-full text-left group cursor-pointer py-1"
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                         <MapPin
-                          className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+                          className={`w-4 h-4 transition-transform group-hover:scale-110 flex-shrink-0 ${
                             isSelected
                               ? 'text-brand-blue fill-brand-blue/30 scale-110'
                               : 'text-brand-blue fill-brand-blue/15'
@@ -442,7 +442,7 @@ export default function TradeRoutesSection({ routes }: TradeRoutesSectionProps) 
                         />
                       </div>
                       <span
-                        className={`text-sm sm:text-base font-semibold transition-colors leading-none ${
+                        className={`text-sm sm:text-base font-semibold transition-colors leading-snug ${
                           isSelected
                             ? 'text-brand-blue font-bold'
                             : 'text-slate-900 group-hover:text-brand-blue'
@@ -452,7 +452,7 @@ export default function TradeRoutesSection({ routes }: TradeRoutesSectionProps) 
                       </span>
                     </div>
 
-                    <span className="text-[11px] font-medium text-slate-500 bg-white/80 px-2 py-0.5 rounded border border-blue-100 shadow-2xs">
+                    <span className="text-[11px] font-medium text-slate-500 bg-white/80 px-2 py-0.5 rounded border border-blue-100 shadow-2xs whitespace-nowrap shrink-0 ml-2">
                       {port.transit}
                     </span>
                   </button>

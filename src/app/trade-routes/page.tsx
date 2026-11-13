@@ -141,12 +141,12 @@ export default async function TradeRoutesPage() {
                   className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border space-y-5 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2.5">
                       <span className="text-xs font-bold uppercase tracking-wider text-brand-blue bg-brand-blue-light px-3 py-1 rounded-md">
                         {route.originRegion} &rarr; {route.destinationRegion}
                       </span>
-                      <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
                         Active Sailing
                       </span>
                     </div>
